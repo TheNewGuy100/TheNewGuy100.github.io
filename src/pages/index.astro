@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projetos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
+
+const stack = {
+  Frontend: ['Angular', 'React', 'Next.js', 'TypeScript', 'JavaScript', 'HTML5', 'SCSS'],
+  Backend: ['Node.js', 'NestJS', 'GraphQL', 'Socket.IO', 'JWT'],
+  'Game Dev': ['Unity', 'Unreal Engine', 'C#', 'C++', 'OpenGL', 'Lua'],
+  'Testes e DevOps': ['Playwright', 'Cypress', 'Docker', 'Jenkins', 'Git', 'Python'],
+};
+---
+<Base title="Pedro Henrique Bohn Costa">
+  <h1>Pedro Henrique Bohn Costa</h1>
+  <p class="lead">Cientista da computação · Full Stack · Game dev · Segurança ofensiva</p>
+
+  <section id="sobre">
+    <h2>Sobre</h2>
+    <p>
+      Desenvolvedor Full Stack na <strong>Impacta Tecnologia</strong>, criando soluções web completas com React, Next.js e Nest.js.
+      Pós-graduando em <strong>Cyber Offensive e Red Team Operations</strong>. Fora do trabalho, construo jogos e ferramentas:
+      um jogo de horror em Unity e um toolkit de modding com ponte para IA para Unreal Engine.
+    </p>
+  </section>
+
+  <section id="projetos">
+    <h2>Projetos</h2>
+    <div class="grid">
+      {projetos.map((p) => <ProjectCard slug={p.id} titulo={p.data.titulo} resumo={p.data.resumo} stack={p.data.stack} />)}
+    </div>
+  </section>
+
+  <section id="stack">
+    <h2>Stack</h2>
+    {Object.entries(stack).map(([grupo, itens]) => (
+      <div style="margin-bottom:14px">
+        <strong>{grupo}</strong>
+        <ul class="tags" style="margin-top:6px">{itens.map((i) => <li>{i}</li>)}</ul>
+      </div>
+    ))}
+  </section>
+
+  <section id="contato">
+    <h2>Contato</h2>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/pedro-henrique-bohn-costa/">LinkedIn</a>
+      <a href="https://github.com/TheNewGuy100">GitHub</a>
+      <a href="https://dev.epicgames.com/community/profile/QKlXQ/Mutei_voce">Epic Developer Community</a>
+      <a href="https://learn.unity.com/u/6165171dedbc2a38932a0287">Unity Learn</a>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,29 @@
+---
+import '../styles/global.css';
+interface Props { title: string; description?: string }
+const { title, description = 'Portfólio de Pedro Henrique Bohn Costa: Full Stack, game dev e segurança ofensiva.' } = Astro.props;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site">
+      <div class="wrap">
+        <a href="/"><strong>TheNewGuy100</strong></a>
+        <nav>
+          <a href="/#sobre">Sobre</a>
+          <a href="/#projetos">Projetos</a>
+          <a href="/#stack">Stack</a>
+          <a href="/#contato">Contato</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap"><slot /></main>
+    <footer><div class="wrap">© {new Date().getFullYear()} Pedro Henrique Bohn Costa</div></footer>
+  </body>
+</html>

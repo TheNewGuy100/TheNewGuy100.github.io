@@ -1,0 +1,9 @@
+---
+interface Props { slug: string; titulo: string; resumo: string; stack: string[] }
+const { slug, titulo, resumo, stack } = Astro.props;
+---
+<a class="card" href={`/projetos/${slug}/`}>
+  <h3>{titulo}</h3>
+  <p>{resumo}</p>
+  <ul class="tags">{stack.map((s) => <li>{s}</li>)}</ul>
+</a>
