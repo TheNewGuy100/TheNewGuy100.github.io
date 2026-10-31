@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+const projetos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const nomes = projetos.map((p) => p.data.titulo).join(' · ');
+---
+<section id="projetos" class="wrap sec">
+  <p class="kicker">02 / Projetos</p>
+  <a class="teaser" href="/projetos/">
+    <span class="t display">Ver todos os projetos</span>
+    <span class="info">
+      <span class="count">{String(projetos.length).padStart(2, '0')} projetos</span>
+      <span class="names">{nomes}</span>
+    </span>
+    <span class="arrow" aria-hidden="true">→</span>
+  </a>
+</section>
+
+<style>
+  .sec {
+    padding-block: 0 0;
+  }
+  .teaser {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: center;
+    gap: 24px;
+    margin-top: 40px;
+    padding-block: 32px;
+    border-block: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  .teaser:hover {
+    background: var(--surface);
+  }
+  .t {
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .count {
+    font: 500 13px var(--mono);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .names {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .arrow {
+    font-size: 28px;
+  }
+  @media (max-width: 768px) {
+    .teaser {
+      grid-template-columns: 1fr auto;
+      padding-block: 22px;
+    }
+    .info {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .t {
+      font-size: 30px;
+    }
+  }
+</style>

@@ -6,10 +6,16 @@ const projetos = defineCollection({
   schema: z.object({
     titulo: z.string(),
     resumo: z.string(),
+    tagline: z.string().optional(),
     stack: z.array(z.string()),
+    status: z.enum(['em desenvolvimento', 'open-source', 'concluído']),
+    tipo: z.string(),
+    /** Categoria do filtro na listagem. */
+    categoria: z.enum(['jogos', 'ferramentas', 'web']),
     repo: z.string().url().optional(),
-    demo: z.string().url().optional(),
-    destaque: z.boolean().default(false),
+    destaques: z.array(z.object({ titulo: z.string(), texto: z.string() })).default([]),
+    /** Se true, a página tem design próprio em src/pages/projetos/<slug>.astro. */
+    paginaPropria: z.boolean().default(false),
     ordem: z.number().default(100),
   }),
 });

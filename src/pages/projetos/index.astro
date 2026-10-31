@@ -1,0 +1,206 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const projetos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const filtros = [
+  { id: 'todos', rotulo: 'Todos' },
+  { id: 'jogos', rotulo: 'Jogos' },
+  { id: 'ferramentas', rotulo: 'Ferramentas' },
+  { id: 'web', rotulo: 'Web e estudos' },
+];
+---
+<Base title="Projetos · Pedro Henrique Bohn Costa" description="Jogos, ferramentas e estudos.">
+  <div class="wrap page">
+    <a class="back" href="/">← Início</a>
+    <h1 class="display">Projetos.</h1>
+    <p class="intro">Jogos, ferramentas e estudos. Cada linha é uma faixa: abre a página do projeto.</p>
+
+    <div class="chips" role="group" aria-label="Filtrar projetos">
+      {filtros.map((f, i) => (
+        <button class="tag" type="button" data-filter={f.id} aria-pressed={String(i === 0)}>{f.rotulo}</button>
+      ))}
+    </div>
+
+    <div class="table" role="list">
+      <div class="head" aria-hidden="true">
+        <span>#</span><span>Projeto</span><span>Stack</span><span>Status</span><span></span>
+      </div>
+      {projetos.map((p, i) => (
+        <a class="row" role="listitem" href={`/projetos/${p.id}/`} data-cat={p.data.categoria}>
+          <span class="num">{String(i + 1).padStart(2, '0')}</span>
+          <span class="main">
+            <span class="title display">{p.data.titulo}</span>
+            <span class="desc">{p.data.resumo}</span>
+          </span>
+          <span class="stack">{p.data.stack.join(' · ')}</span>
+          <span class="status">
+            <span class:list={['dot', { on: p.data.status === 'em desenvolvimento' }]}></span>
+            {p.data.status}
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: 40px;
+    padding-bottom: 96px;
+  }
+  .back {
+    font: 400 13px var(--mono);
+    color: var(--muted);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  h1 {
+    font-size: clamp(76px, 10vw, 132px);
+    margin: 24px 0 24px;
+  }
+  .intro {
+    color: var(--muted);
+    font-size: 18px;
+    max-width: 760px;
+    margin: 0 0 40px;
+  }
+  .chips {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .tag[aria-pressed='true'] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+  .tag:not([aria-pressed='true']):hover {
+    border-color: var(--accent);
+  }
+  .head,
+  .row {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 480px) 1fr 1fr 40px;
+    align-items: center;
+  }
+  .head {
+    border-top: 1px solid var(--border);
+    padding: 16px 0;
+    font: 400 12px var(--mono);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .row {
+    min-height: 136px;
+    padding-block: 24px;
+    border-top: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  .row[hidden] {
+    display: none;
+  }
+  .table .row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+  .row:hover {
+    background: var(--surface);
+  }
+  .row:hover .title,
+  .row:hover .num {
+    color: var(--accent);
+  }
+  .num {
+    font: 400 14px var(--mono);
+    color: var(--muted);
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .title {
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .desc {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .stack {
+    font: 400 13px var(--mono);
+    color: var(--accent);
+  }
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .dot.on {
+    background: var(--accent);
+  }
+  .arrow {
+    font-size: 28px;
+    justify-self: end;
+  }
+  @media (max-width: 960px) {
+    .head {
+      display: none;
+    }
+    .row {
+      grid-template-columns: 40px 1fr 28px;
+      grid-template-rows: auto auto auto;
+      row-gap: 10px;
+      min-height: 0;
+    }
+    .main {
+      grid-column: 2;
+    }
+    .arrow {
+      grid-column: 3;
+      grid-row: 1;
+      font-size: 22px;
+    }
+    .stack,
+    .status {
+      grid-column: 2;
+    }
+    .title {
+      font-size: 30px;
+    }
+  }
+  @media (max-width: 768px) {
+    .page {
+      padding-top: 24px;
+    }
+    h1 {
+      font-size: 76px;
+      margin-top: 16px;
+    }
+    .intro {
+      font-size: 15px;
+      margin-bottom: 24px;
+    }
+    .chips {
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .tag {
+      height: 34px;
+      padding-inline: 16px;
+      font-size: 13px;
+    }
+  }
+</style>

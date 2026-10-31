@@ -1,8 +1,11 @@
 ---
 titulo: Hollow Sign
-resumo: Jogo de investigação e horror em primeira pessoa feito em Unity (URP, Input System, UI Toolkit). Em desenvolvimento.
+resumo: Horror de investigação em primeira pessoa.
 stack: [Unity, C#]
-destaque: true
+status: em desenvolvimento
+tipo: Jogo
+categoria: jogos
+destaques: []
 ordem: 2
 ---
-Jogo de investigação/horror em primeira pessoa, em desenvolvimento. Arquitetura por domínios, com um assembly por domínio e comunicação por interfaces e eventos em `Core`.
+Jogo de investigação e horror em primeira pessoa feito em Unity (URP, Input System, UI Toolkit). Em desenvolvimento, com arquitetura por domínios: um assembly por domínio e comunicação por interfaces e eventos.

@@ -1,0 +1,293 @@
+---
+import { getCollection } from 'astro:content';
+import { links, curriculo, emailB64 } from '../data/contato';
+
+const path = Astro.url.pathname;
+const total = (await getCollection('projetos')).length;
+const items = [
+  { n: '01', rotulo: 'Início', desc: 'página inicial', href: '/', ativo: path === '/' },
+  { n: '02', rotulo: 'Sobre', desc: 'quem sou', href: '/#sobre', ativo: false },
+  { n: '03', rotulo: 'Projetos', desc: `${String(total).padStart(2, '0')} projetos`, href: '/projetos/', ativo: path.startsWith('/projetos') },
+  { n: '04', rotulo: 'Stack', desc: 'ferramentas', href: '/#stack', ativo: false },
+  { n: '05', rotulo: 'Contato', desc: 'e-mail · currículo', href: '/#contato', ativo: false },
+];
+---
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+  <div class="top">
+    <button class="close" type="button" data-menu-close><span aria-hidden="true">✕</span> Fechar</button>
+    <span class="brand">PEDRO BOHN</span>
+    <div class="right">
+      <span class="lang">PT</span>
+      <button class="som" type="button" data-sound-toggle aria-pressed="false"><span aria-hidden="true">♪</span> <span data-sound-label>som off</span></button>
+    </div>
+  </div>
+  <div class="body">
+    <nav class="items" aria-label="Principal">
+      {items.map((i) => (
+        <a class:list={['item', { ativo: i.ativo }]} href={i.href} aria-current={i.ativo ? 'page' : undefined}>
+          <span class="num">{i.n}</span>
+          <span class="name">{i.rotulo}</span>
+          <span class="desc">{i.desc}</span>
+          {i.ativo && <span class="arrow" aria-hidden="true">→</span>}
+        </a>
+      ))}
+    </nav>
+    <aside class="panel">
+      <p class="label">Now playing</p>
+      <div class="np">
+        <button class="play" type="button" data-sound-toggle aria-pressed="false" aria-label="Tocar ou pausar a trilha"><span data-play-icon>▶</span></button>
+        <div>
+          <strong>Faixa 01 — título da música</strong>
+        </div>
+        <canvas class="mini" data-eq data-count="14" data-gap="3" data-idle="0.55" aria-hidden="true"></canvas>
+      </div>
+      <hr />
+      <p class="label">Contato</p>
+      <ul class="contacts">
+        {links.map((l) => (
+          <li><span class="key">{l.chave}</span><a href={l.href} target="_blank" rel="noopener noreferrer">{l.rotulo} <span aria-hidden="true">↗</span></a></li>
+        ))}
+        <li><span class="key">email</span><span class="email-line"><button type="button" class="reveal" data-email-reveal data-b64={emailB64}>[ revelar e-mail ]</button></span></li>
+      </ul>
+      <a class="btn cv" href={curriculo} download>Baixar currículo (PDF)</a>
+      <hr />
+      <div class="foot">
+        <div><p class="label">Idioma</p><p class="mono">PT &nbsp;·&nbsp; EN</p></div>
+        <div><p class="label">Som</p><button type="button" class="som mono" data-sound-toggle aria-pressed="false">♪ &nbsp;<span data-sound-label>off</span></button></div>
+      </div>
+    </aside>
+  </div>
+  <canvas class="floor" data-eq data-count="96" data-gap="5" data-alpha="0.3" data-idle="0.5" aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--bg);
+    overflow-y: auto;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateX(16px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s;
+  }
+  .menu[data-open] {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .top {
+    height: var(--header);
+    padding-inline: var(--pad);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    max-width: 100%;
+  }
+  .close {
+    justify-self: start;
+    font: 500 15px var(--body);
+  }
+  .brand {
+    font: 600 22px var(--display);
+    letter-spacing: 6px;
+  }
+  .right {
+    justify-self: end;
+    display: flex;
+    gap: 24px;
+    font: 500 13px var(--mono);
+  }
+  .som {
+    color: var(--muted);
+    font: 400 13px var(--mono);
+  }
+  .som.is-on {
+    color: var(--accent);
+  }
+  .body {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 34px var(--pad) 140px;
+    display: grid;
+    grid-template-columns: minmax(0, 760px) minmax(0, 496px);
+    gap: 56px;
+    justify-content: space-between;
+    align-items: start;
+  }
+  .items {
+    border-top: 1px solid var(--border);
+  }
+  .item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 96px 1fr auto auto;
+    align-items: center;
+    height: 112px;
+    padding-inline: 28px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+  }
+  .item:hover {
+    background: var(--surface);
+  }
+  .num {
+    font: 400 13px var(--mono);
+    color: var(--muted);
+  }
+  .name {
+    font: 300 clamp(56px, 6vw, 76px) / 1 var(--display);
+  }
+  .desc {
+    font: 400 12px var(--mono);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .arrow {
+    font-size: 30px;
+    color: var(--accent);
+    margin-left: 20px;
+  }
+  .item.ativo {
+    background: var(--surface);
+  }
+  .item.ativo::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--accent);
+  }
+  .item.ativo .name,
+  .item.ativo .num,
+  .item.ativo .desc {
+    color: var(--accent);
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px 32px;
+  }
+  .panel hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+  .np {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .play {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .np strong {
+    font-weight: 500;
+    font-size: 16px;
+  }
+  .mini {
+    margin-left: auto;
+    width: 98px;
+    height: 32px;
+  }
+  .contacts {
+    list-style: none;
+    margin: 14px 0 22px;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .contacts li {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    align-items: baseline;
+  }
+  .key {
+    font: 400 13px var(--mono);
+    color: var(--muted);
+  }
+  .contacts a {
+    font-size: 16px;
+  }
+  .contacts a:hover {
+    color: var(--accent);
+  }
+  .reveal {
+    font: 400 13px var(--mono);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 3px 10px;
+  }
+  .cv {
+    width: 100%;
+    border-radius: 6px;
+  }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+  }
+  .mono {
+    font: 400 13px var(--mono);
+    margin: 6px 0 0;
+  }
+  .floor {
+    position: fixed;
+    inset: auto 0 0 0;
+    width: 100%;
+    height: 80px;
+    pointer-events: none;
+    z-index: -1;
+  }
+  @media (max-width: 960px) {
+    .body {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+  @media (max-width: 768px) {
+    .brand {
+      font-size: 18px;
+      letter-spacing: 4px;
+    }
+    .lang {
+      display: none;
+    }
+    .body {
+      padding-top: 16px;
+    }
+    .item {
+      grid-template-columns: 40px 1fr auto auto;
+      height: 76px;
+      padding-inline: 16px;
+    }
+    .name {
+      font-size: 48px;
+    }
+    .desc {
+      font-size: 10px;
+    }
+    .arrow {
+      font-size: 20px;
+      margin-left: 10px;
+    }
+    .panel {
+      padding: 20px;
+    }
+    .floor {
+      height: 56px;
+    }
+  }
+</style>

@@ -1,0 +1,457 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Tile from '../../components/Tile.astro';
+
+const todos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const idx = todos.findIndex((p) => p.id === 'vibedeck');
+const anterior = todos[idx - 1];
+
+const funcionalidades = [
+  ['Reprodução local', 'Fila com controles de reprodução.'],
+  ['Arrastar e soltar', 'Pastas e arquivos adicionados direto na janela.'],
+  ['Playlists', 'Fontes locais, online ou mistas.'],
+  ['Favoritos', 'Playlist própria de favoritos.'],
+  ['Login com Google', 'OAuth desktop com PKCE.'],
+  ['Sincronização', 'Playlists do YouTube via YouTube Data API.'],
+  ['Temas', 'Claro e escuro.'],
+  ['Proteção de dados', 'AES-GCM e Windows DPAPI em duas camadas.'],
+];
+const tecnologias = [
+  { nome: 'Tauri', slug: 'tauri' },
+  { nome: 'Vue', slug: 'vuedotjs' },
+  { nome: 'TypeScript', slug: 'typescript' },
+  { nome: 'Rust', mono: 'Rs' },
+  { nome: 'Vite', slug: 'vite' },
+];
+---
+<Base title="VibeDeck · Pedro Henrique Bohn Costa" description="Player desktop pessoal que une músicas locais e o YouTube Music.">
+  <div class="wrap page">
+    <div class="top">
+      <a class="back" href="/projetos/">← Projetos</a>
+      <span class="idx">{String(idx + 1).padStart(2, '0')} / {String(todos.length).padStart(2, '0')}</span>
+    </div>
+    <h1 class="display">VibeDeck.</h1>
+    <p class="tagline">Tauri · Vue · Rust</p>
+
+    <dl class="meta">
+      <div><dt class="label">Status</dt><dd class="ok">em desenvolvimento</dd></div>
+      <div><dt class="label">Stack</dt><dd>Tauri · Vue · Rust</dd></div>
+      <div><dt class="label">Plataforma</dt><dd>Windows (desktop)</dd></div>
+      <div><dt class="label">Tipo</dt><dd>Projeto pessoal</dd></div>
+    </dl>
+
+    <figure class="app" aria-label="Ilustração da interface do VibeDeck">
+      <div class="bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="t">VibeDeck</span></div>
+      <div class="inner">
+        <aside>
+          <p class="label">Biblioteca</p>
+          <ul><li class="on">Favoritos</li><li>Local</li><li>YouTube</li><li>Playlists</li></ul>
+        </aside>
+        <div class="queue">
+          <p class="label">Fila</p>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div class="line">
+              <span class="cv"></span>
+              <span class="ls"><i style={`width:${42 + ((i * 47) % 40)}%`}></i><i class="s" style={`width:${24 + ((i * 31) % 28)}%`}></i></span>
+              <span class="tm"></span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="pl"><span class="pbtn"></span><span class="prog"><i></i></span><span class="vol"><i></i></span></div>
+      <figcaption class="label">Ilustração · substituir por screenshot</figcaption>
+    </figure>
+
+    <section class="about">
+      <p class="kicker">01 / Sobre o projeto</p>
+      <p class="display text">Cliente de música desktop pessoal, feito com Tauri, Vue e Rust. Une bibliotecas locais aos metadados sincronizados do YouTube Music em uma interface rápida e pensada para o teclado.</p>
+    </section>
+
+    <section>
+      <p class="kicker">02 / Funcionalidades</p>
+      <ul class="feats">
+        {funcionalidades.map(([t, d], i) => (
+          <li>
+            <span class="n">{String(i + 1).padStart(2, '0')}</span>
+            <strong>{t}</strong>
+            <span class="d">{d}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section>
+      <p class="kicker">03 / Tecnologias</p>
+      <ul class="tiles">
+        {tecnologias.map((t) => <Tile nome={t.nome} slug={t.slug} mono={t.mono} />)}
+      </ul>
+    </section>
+
+    <section>
+      <p class="kicker">04 / Próximos passos</p>
+      <div class="next">
+        <div>
+          <strong>Camada de reprodução online</strong>
+          <p>Cliente em Rust para o catálogo online, atrás da mesma interface de fonte usada pelo player local.</p>
+        </div>
+        <span class="chip">planejado</span>
+      </div>
+      <p class="note">O VibeDeck é um projeto pessoal e não é afiliado ao Google nem ao YouTube.</p>
+    </section>
+
+    <nav class="pager" aria-label="Outros projetos">
+      <div>
+        <p class="label">Anterior</p>
+        {anterior ? <a class="display" href={`/projetos/${anterior.id}/`}>← {anterior.data.titulo}</a> : <span class="display none">—</span>}
+      </div>
+      <div class="r">
+        <p class="label">Próximo</p>
+        <span class="display none">—</span>
+      </div>
+    </nav>
+  </div>
+</Base>
+
+<style>
+  .page {
+    padding-top: 40px;
+    padding-bottom: 96px;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    font: 400 13px var(--mono);
+  }
+  .back {
+    color: var(--muted);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+  .idx {
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  h1 {
+    font-size: clamp(76px, 10vw, 132px);
+    margin: 24px 0 18px;
+  }
+  .tagline {
+    font: 400 16px var(--mono);
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin: 0 0 44px;
+  }
+  .meta {
+    margin: 0 0 48px;
+    padding: 24px 0;
+    border-block: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+  }
+  dt {
+    margin-bottom: 6px;
+  }
+  dd {
+    margin: 0;
+    font-size: 17px;
+  }
+  .ok {
+    color: var(--accent);
+  }
+  .app {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding-inline: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dots i {
+    width: 10px;
+    height: 10px;
+    border: 1px solid var(--muted);
+    border-radius: 50%;
+  }
+  .t {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: 400 12px var(--mono);
+    color: var(--muted);
+  }
+  .inner {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 440px;
+  }
+  aside {
+    padding: 24px;
+    border-right: 1px solid var(--border);
+  }
+  aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 18px 0 0;
+    display: grid;
+    gap: 14px;
+    font-size: 14px;
+  }
+  aside .on {
+    color: var(--accent);
+  }
+  .queue {
+    padding: 24px;
+    display: grid;
+    gap: 16px;
+    align-content: start;
+  }
+  .line {
+    display: grid;
+    grid-template-columns: 36px 1fr 48px;
+    align-items: center;
+    gap: 16px;
+  }
+  .cv {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background: var(--border);
+  }
+  .ls {
+    display: grid;
+    gap: 8px;
+  }
+  .ls i,
+  .tm {
+    display: block;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .ls i.s {
+    height: 6px;
+    opacity: 0.55;
+  }
+  .tm {
+    height: 6px;
+    opacity: 0.55;
+  }
+  .pl {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 72px;
+    padding-inline: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .pbtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .prog,
+  .vol {
+    position: relative;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .prog {
+    flex: 1;
+  }
+  .vol {
+    width: 120px;
+  }
+  .prog i,
+  .vol i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .prog i {
+    width: 36%;
+  }
+  .vol i {
+    width: 58%;
+  }
+  figcaption {
+    text-align: right;
+    padding: 10px 16px;
+    font-size: 11px;
+  }
+  .about,
+  section + section {
+    margin-top: 72px;
+  }
+  .about {
+    margin-top: 64px;
+  }
+  .text {
+    margin-top: 28px;
+    max-width: 900px;
+    font-size: clamp(28px, 3.1vw, 44px);
+    line-height: 1.1;
+  }
+  .feats {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .feats li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 132px;
+    padding: 22px 24px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .n {
+    font: 400 12px var(--mono);
+    color: var(--accent);
+  }
+  .feats strong {
+    font: 500 18px var(--body);
+  }
+  .d {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .tiles {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 136px);
+    gap: 12px;
+  }
+  .next {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 24px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .next strong {
+    font: 500 18px var(--body);
+  }
+  .next p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 760px;
+  }
+  .chip {
+    flex: none;
+    padding: 5px 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font: 400 12px var(--mono);
+    color: var(--muted);
+  }
+  .note {
+    margin: 16px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .pager {
+    margin-top: 88px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .pager .display {
+    display: block;
+    margin-top: 10px;
+    font-size: 36px;
+    font-weight: 400;
+  }
+  .pager a:hover {
+    color: var(--accent);
+  }
+  .r {
+    text-align: right;
+  }
+  .none {
+    color: var(--muted);
+  }
+  @media (max-width: 960px) {
+    .feats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .inner {
+      grid-template-columns: 1fr;
+    }
+    aside {
+      display: none;
+    }
+  }
+  @media (max-width: 768px) {
+    .page {
+      padding-top: 24px;
+    }
+    h1 {
+      font-size: 76px;
+    }
+    .meta {
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .tiles {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .feats {
+      gap: 12px;
+    }
+    .feats li {
+      min-height: 116px;
+      padding: 16px;
+    }
+    .feats strong {
+      font-size: 15px;
+    }
+    .d {
+      font-size: 12px;
+    }
+    .next {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .pager .display {
+      font-size: 26px;
+    }
+    .pl {
+      height: 56px;
+    }
+    .vol {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+import { linguagens, niveis } from '../data/perfil';
+import { iconPath } from '../lib/icons';
+---
+<section id="linguagens" class="wrap sec">
+  <div class="head">
+    <p class="kicker">03 / Linguagens</p>
+    <ul class="legend" aria-label="Legenda de níveis">
+      {Object.values(niveis).map((n) => (
+        <li><span class="dot" style={`background:${n.cor}`}></span>{n.rotulo}</li>
+      ))}
+    </ul>
+  </div>
+  <ul class="grid">
+    {linguagens.map((l) => {
+      const n = niveis[l.nivel];
+      const path = iconPath(l.slug);
+      return (
+        <li class="card" style={`--cor:${n.cor}`}>
+          <span class="ic" aria-hidden="true">
+            {path ? <svg viewBox="0 0 24 24"><path d={path} fill="currentColor" /></svg> : <span class="mono">{l.mono}</span>}
+          </span>
+          <span class="txt">
+            <strong>{l.nome}</strong>
+            <span class="lv">{n.rotulo}</span>
+          </span>
+          <span class="bar" role="img" aria-label={`Nível ${n.rotulo}`}><span style={`width:${n.pct}%`}></span></span>
+        </li>
+      );
+    })}
+  </ul>
+</section>
+
+<style>
+  .sec {
+    padding-top: 90px;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 22px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .grid {
+    list-style: none;
+    padding: 0;
+    margin: 40px 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 104px;
+    padding: 0 24px 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .ic {
+    flex: none;
+    width: 36px;
+    display: grid;
+    place-items: center;
+  }
+  svg {
+    width: 36px;
+    height: 36px;
+  }
+  .mono {
+    font: 600 22px var(--mono);
+  }
+  .txt {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  strong {
+    font: 500 18px var(--body);
+  }
+  .lv {
+    font: 400 11px var(--mono);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--cor);
+  }
+  .bar {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 4px;
+    background: var(--border);
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    background: var(--cor);
+  }
+  @media (max-width: 960px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .sec {
+      padding-top: 56px;
+    }
+    .grid {
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .card {
+      height: 88px;
+      padding-inline: 16px;
+      gap: 12px;
+    }
+    svg {
+      width: 28px;
+      height: 28px;
+    }
+    .ic {
+      width: 28px;
+    }
+    strong {
+      font-size: 15px;
+    }
+    .lv {
+      font-size: 10px;
+    }
+    .legend {
+      gap: 12px;
+      font-size: 12px;
+    }
+  }
+</style>

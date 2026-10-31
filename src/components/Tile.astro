@@ -1,0 +1,74 @@
+---
+import { iconPath } from '../lib/icons';
+
+interface Props {
+  nome: string;
+  slug?: string;
+  mono?: string;
+}
+const { nome, slug, mono } = Astro.props;
+const path = iconPath(slug);
+---
+<li class="tile">
+  <span class="ic" aria-hidden="true">
+    {path ? <svg viewBox="0 0 24 24"><path d={path} fill="currentColor" /></svg> : <span class="mono">{mono ?? nome.slice(0, 2)}</span>}
+  </span>
+  <span class="n">{nome}</span>
+</li>
+
+<style>
+  .tile {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 112px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.15s ease;
+  }
+  .tile:hover {
+    border-color: var(--accent);
+  }
+  .ic {
+    height: 34px;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+  }
+  svg {
+    width: 34px;
+    height: 34px;
+  }
+  .mono {
+    font: 600 24px var(--mono);
+  }
+  .n {
+    font: 500 14px var(--body);
+    text-align: center;
+    padding-inline: 6px;
+  }
+  @media (max-width: 768px) {
+    .tile {
+      height: 80px;
+      gap: 8px;
+    }
+    .ic {
+      height: 26px;
+    }
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+    .mono {
+      font-size: 17px;
+    }
+    .n {
+      font-size: 11px;
+      padding-inline: 2px;
+    }
+  }
+</style>

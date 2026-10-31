@@ -1,0 +1,121 @@
+---
+---
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-label="Entrada">
+  <div class="top">
+    <span class="brand">PEDRO BOHN</span>
+  </div>
+  <div class="content">
+    <p class="kicker">Full Stack · Game dev · Segurança ofensiva</p>
+    <h1 class="display">Pedro Henrique<br />Bohn Costa.</h1>
+    <div class="actions">
+      <button class="btn" type="button" data-intro-enter="sound">Entrar</button>
+      <button class="btn ghost" type="button" data-intro-enter="mute">Entrar sem som</button>
+    </div>
+  </div>
+  <canvas class="eq" id="intro-eq" aria-hidden="true"></canvas>
+</div>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.5s ease;
+  }
+  :global(html.entered) .intro {
+    display: none;
+  }
+  .intro.leaving {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .top {
+    height: var(--header);
+    display: grid;
+    place-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font: 600 22px var(--display);
+    letter-spacing: 6px;
+  }
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: clamp(40px, 12vh, 140px) var(--pad) 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  h1 {
+    font-size: clamp(68px, 10vw, 132px);
+  }
+  .actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .eq {
+    position: absolute;
+    inset: auto 0 0 0;
+    width: 100%;
+    height: clamp(170px, 34vh, 320px);
+    pointer-events: none;
+  }
+  @media (max-width: 768px) {
+    .brand {
+      font-size: 18px;
+      letter-spacing: 4px;
+    }
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .kicker {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+  }
+</style>
+
+<script>
+  import { startEq3D } from '../scripts/eq';
+  import { setSound } from '../scripts/audio';
+
+  function boot(): void {
+    const intro = document.getElementById('intro');
+    if (!intro || intro.dataset.ready || document.documentElement.classList.contains('entered')) return;
+    intro.dataset.ready = '1';
+    const canvas = document.getElementById('intro-eq') as HTMLCanvasElement | null;
+    if (canvas && !canvas.dataset.started) {
+      canvas.dataset.started = '1';
+      startEq3D(canvas);
+    }
+    document.body.style.overflow = 'hidden';
+    intro.querySelector<HTMLElement>('[data-intro-enter="sound"]')?.focus();
+
+    intro.querySelectorAll<HTMLElement>('[data-intro-enter]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (btn.dataset.introEnter === 'sound') await setSound(true);
+        try {
+          sessionStorage.setItem('vd-entered', '1');
+        } catch {
+          // Navegação privada: a entrada apenas reaparece no próximo carregamento.
+        }
+        intro.classList.add('leaving');
+        document.body.style.overflow = '';
+        setTimeout(() => document.documentElement.classList.add('entered'), 500);
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', boot);
+  boot();
+</script>

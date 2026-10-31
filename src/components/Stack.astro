@@ -1,0 +1,112 @@
+---
+import { stack, praticas } from '../data/perfil';
+import Tile from './Tile.astro';
+---
+<section id="stack" class="wrap sec">
+  <p class="kicker">04 / Stack</p>
+  <div class="groups">
+    {stack.map((g) => (
+      <div class="group">
+        <div class="meta">
+          <h3 class="kicker">{g.grupo}</h3>
+          <p class="count">{String(g.itens.length).padStart(2, '0')} tecnologias</p>
+        </div>
+        <ul class="tiles">
+          {g.itens.map((i) => <Tile nome={i.nome} slug={i.slug} mono={i.mono} />)}
+        </ul>
+      </div>
+    ))}
+    <div class="group">
+      <div class="meta">
+        <h3 class="kicker">Métodos e práticas</h3>
+      </div>
+      <ul class="chips">
+        {praticas.map((p) => <li class="tag">{p}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sec {
+    padding-top: 90px;
+  }
+  .groups {
+    margin-top: 40px;
+  }
+  .group {
+    display: grid;
+    grid-template-columns: 276px 1fr;
+    gap: 24px;
+    padding-block: 20px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .group:last-child {
+    border-bottom: 0;
+  }
+  h3 {
+    margin: 8px 0 0;
+  }
+  .count {
+    margin: 8px 0 0;
+    font: 400 12px var(--mono);
+    color: var(--muted);
+  }
+  .tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 136px);
+    gap: 12px;
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-content: flex-start;
+  }
+  @media (max-width: 1280px) {
+    .tiles {
+      grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+    }
+  }
+  @media (max-width: 960px) {
+    .group {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    h3,
+    .count {
+      margin: 0;
+    }
+  }
+  @media (max-width: 768px) {
+    .sec {
+      padding-top: 56px;
+    }
+    .groups {
+      margin-top: 24px;
+    }
+    .tiles {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .tag {
+      height: 30px;
+      padding-inline: 14px;
+      font-size: 12px;
+    }
+    .chips {
+      gap: 8px;
+    }
+  }
+</style>

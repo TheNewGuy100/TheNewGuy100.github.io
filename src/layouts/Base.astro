@@ -1,7 +1,28 @@
 ---
+import { ClientRouter } from 'astro:transitions';
+import '@fontsource/barlow-condensed/300.css';
+import '@fontsource/barlow-condensed/400.css';
+import '@fontsource/barlow-condensed/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
 import '../styles/global.css';
-interface Props { title: string; description?: string }
-const { title, description = 'Portfólio de Pedro Henrique Bohn Costa: Full Stack, game dev e segurança ofensiva.' } = Astro.props;
+import Header from '../components/Header.astro';
+import Menu from '../components/Menu.astro';
+import Player from '../components/Player.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Pedro Henrique Bohn Costa',
+  description = 'Portfólio de Pedro Henrique Bohn Costa: Full Stack, game dev e segurança ofensiva.',
+} = Astro.props;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -9,21 +30,24 @@ const { title, description = 'Portfólio de Pedro Henrique Bohn Costa: Full Stac
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0a0b0d" />
     <title>{title}</title>
+    <script is:inline data-astro-rerun>
+      try {
+        if (sessionStorage.getItem('vd-entered')) document.documentElement.classList.add('entered');
+      } catch (e) {}
+    </script>
+    <ClientRouter />
   </head>
   <body>
-    <header class="site">
-      <div class="wrap">
-        <a href="/"><strong>TheNewGuy100</strong></a>
-        <nav>
-          <a href="/#sobre">Sobre</a>
-          <a href="/#projetos">Projetos</a>
-          <a href="/#stack">Stack</a>
-          <a href="/#contato">Contato</a>
-        </nav>
-      </div>
-    </header>
-    <main class="wrap"><slot /></main>
-    <footer><div class="wrap">© {new Date().getFullYear()} Pedro Henrique Bohn Costa</div></footer>
+    <Header />
+    <main id="conteudo">
+      <slot />
+    </main>
+    <Menu />
+    <Player transition:persist />
+    <script>
+      import '../scripts/ui';
+    </script>
   </body>
 </html>
