@@ -33,6 +33,12 @@ const d = projeto.data;
       {d.repo && <div><dt class="label">Código</dt><dd><a href={d.repo} target="_blank" rel="noopener noreferrer">{d.repo.replace('https://', '')} ↗</a></dd></div>}
     </dl>
 
+    {d.capa && (
+      <figure class="capa">
+        <img src={d.capa.src} alt={d.capa.alt} loading="lazy" />
+      </figure>
+    )}
+
     <section class="about">
       <p class="kicker">01 / Sobre o projeto</p>
       <div class="display text"><Content /></div>
@@ -117,9 +123,27 @@ const d = projeto.data;
   .ok {
     color: var(--accent);
   }
+  .capa {
+    margin: 0 0 64px;
+    padding: 24px;
+    display: grid;
+    place-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .capa img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+  }
   .about,
   section + section {
     margin-top: 72px;
+  }
+  .capa + .about {
+    margin-top: 0;
   }
   .text {
     margin-top: 28px;

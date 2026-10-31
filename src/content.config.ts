@@ -13,6 +13,8 @@ const projetos = defineCollection({
     /** Categoria do filtro na listagem. */
     categoria: z.enum(['jogos', 'ferramentas', 'web']),
     repo: z.string().url().optional(),
+    /** Imagem de capa (caminho em public/) e o texto alternativo dela. */
+    capa: z.object({ src: z.string(), alt: z.string() }).optional(),
     destaques: z.array(z.object({ titulo: z.string(), texto: z.string() })).default([]),
     /** Se true, a página tem design próprio em src/pages/projetos/<slug>.astro. */
     paginaPropria: z.boolean().default(false),
