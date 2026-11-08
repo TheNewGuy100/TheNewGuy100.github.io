@@ -5,7 +5,7 @@ stack: [C++, OpenGL]
 status: concluído
 tipo: Estudo
 categoria: web
-repo: https://github.com/TheNewGuy100/OpenGLSpongeBob
+repo: https://github.com/TheNewGuy100/OpenGL
 capa:
   src: /img/projetos/opengl-spongebob.png
   alt: Cena em OpenGL com o Bob Esponja acenando com o braço esquerdo, sobre um chão verde e um grid, cercado de formas geométricas coloridas.
