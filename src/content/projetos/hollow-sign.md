@@ -6,9 +6,8 @@ status: em desenvolvimento
 tipo: Jogo
 categoria: jogos
 capa:
-  src: /img/projetos/hollow-sign-marca.svg
-  alt: "Símbolo do Hollow Sign: uma agulha vertical atravessa um losango vazio, dentro de um círculo partido com pequenas estrelas, em traço desgastado cor de osso."
-  retrato: true
+  src: /img/projetos/hollow-sign-capa.webp
+  alt: "Arte do Hollow Sign: o nome do jogo em letras góticas ao redor do emblema, sobre uma mesa escura com uma mala de couro manchada de sangue, um rádio com visor âmbar, balas, a foto de uma igreja e mapas ocultistas."
 destaques: []
 atualizado: 2026-11-10
 ordem: 2

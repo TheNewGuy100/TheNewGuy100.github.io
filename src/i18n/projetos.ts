@@ -41,13 +41,13 @@ const traducoes: Record<string, Partial<Record<'en' | 'es', Traducao>>> = {
       resumo: 'First-person investigation horror game.',
       corpo:
         'First-person investigation and horror game built in Unity (URP, Input System, UI Toolkit). In development, with a domain-based architecture: one assembly per domain, communicating through interfaces and events.',
-      capaAlt: 'Hollow Sign emblem: a vertical needle running through an empty diamond, inside a broken circle with small stars, in a worn bone-colored stroke.',
+      capaAlt: 'Hollow Sign key art: the game name in gothic letters around the emblem, over a dark table with a blood-stained leather case, a radio with an amber display, bullets, a photo of a church and occult maps.',
     },
     es: {
       resumo: 'Terror de investigación en primera persona.',
       corpo:
         'Juego de investigación y terror en primera persona hecho en Unity (URP, Input System, UI Toolkit). En desarrollo, con arquitectura por dominios: un assembly por dominio y comunicación mediante interfaces y eventos.',
-      capaAlt: 'Emblema de Hollow Sign: una aguja vertical que atraviesa un rombo vacío, dentro de un círculo partido con pequeñas estrellas, en trazo desgastado color hueso.',
+      capaAlt: 'Arte de Hollow Sign: el nombre del juego en letras góticas alrededor del emblema, sobre una mesa oscura con un maletín de cuero manchado de sangre, una radio con pantalla ámbar, balas, la foto de una iglesia y mapas ocultistas.',
     },
   },
   'personal-finance': {
