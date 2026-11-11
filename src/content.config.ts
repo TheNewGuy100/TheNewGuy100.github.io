@@ -14,10 +14,12 @@ const projetos = defineCollection({
     categoria: z.enum(['jogos', 'ferramentas', 'web']),
     repo: z.string().url().optional(),
     /** Imagem de capa (caminho em public/) e o texto alternativo dela. */
-    capa: z.object({ src: z.string(), alt: z.string() }).optional(),
+    capa: z.object({ src: z.string(), alt: z.string(), /** Imagem alta (ex.: um símbolo): limita a altura em vez de esticar na largura. */ retrato: z.boolean().default(false) }).optional(),
     destaques: z.array(z.object({ titulo: z.string(), texto: z.string() })).default([]),
     /** Se true, a página tem design próprio em src/pages/projetos/<slug>.astro. */
     paginaPropria: z.boolean().default(false),
+    /** Data da última atualização relevante. O projeto com a data mais recente ganha o destaque da tela inicial. */
+    atualizado: z.coerce.date().optional(),
     ordem: z.number().default(100),
   }),
 });

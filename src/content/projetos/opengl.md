@@ -1,5 +1,5 @@
 ---
-titulo: OpenGLSpongeBob
+titulo: OpenGL
 resumo: Cena 3D em C++ com o Bob Esponja montado só com vértices e curvas de Bézier.
 stack: [C++, OpenGL]
 status: concluído
@@ -7,7 +7,7 @@ tipo: Estudo
 categoria: web
 repo: https://github.com/TheNewGuy100/OpenGL
 capa:
-  src: /img/projetos/opengl-spongebob.png
+  src: /img/projetos/opengl.png
   alt: Cena em OpenGL com o Bob Esponja acenando com o braço esquerdo, sobre um chão verde e um grid, cercado de formas geométricas coloridas.
 destaques:
   - titulo: Vértices

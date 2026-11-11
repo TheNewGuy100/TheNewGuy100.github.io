@@ -1,22 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
+import Base from '../../../layouts/Base.astro';
+import { getLang, href, langPaths, pad } from '../../../i18n';
+import { ui } from '../../../i18n/ui';
+import { localizar } from '../../../i18n/projetos';
 
+export function getStaticPaths() {
+  return langPaths();
+}
+
+const lang = getLang(Astro.url);
+const t = ui(lang);
 const projetos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
-const filtros = [
-  { id: 'todos', rotulo: 'Todos' },
-  { id: 'jogos', rotulo: 'Jogos' },
-  { id: 'ferramentas', rotulo: 'Ferramentas' },
-  { id: 'web', rotulo: 'Web e estudos' },
-];
+const filtros = (['todos', 'jogos', 'ferramentas', 'web'] as const).map((id) => ({ id, rotulo: t.projetos.filtros[id] }));
 ---
-<Base title="Projetos · Pedro Henrique Bohn Costa" description="Jogos, ferramentas e estudos.">
+<Base title={t.projetos.seoTitulo} description={t.projetos.seoDescricao}>
   <div class="wrap page">
-    <a class="back" href="/">← Início</a>
-    <h1 class="display">Projetos.</h1>
-    <p class="intro">Jogos, ferramentas e estudos. Cada linha é uma faixa: abre a página do projeto.</p>
+    <a class="back" href={href(lang, '/')}>{t.projetos.voltar}</a>
+    <h1 class="display">{t.projetos.titulo}.</h1>
+    <p class="intro">{t.projetos.intro}</p>
 
-    <div class="chips" role="group" aria-label="Filtrar projetos">
+    <div class="chips" role="group" aria-label={t.projetos.filtroAria}>
       {filtros.map((f, i) => (
         <button class="tag" type="button" data-filter={f.id} aria-pressed={String(i === 0)}>{f.rotulo}</button>
       ))}
@@ -24,19 +28,19 @@ const filtros = [
 
     <div class="table" role="list">
       <div class="head" aria-hidden="true">
-        <span>#</span><span>Projeto</span><span>Stack</span><span>Status</span><span></span>
+        <span>#</span><span>{t.projetos.cols.projeto}</span><span>{t.projetos.cols.stack}</span><span>{t.projetos.cols.status}</span><span></span>
       </div>
       {projetos.map((p, i) => (
-        <a class="row" role="listitem" href={`/projetos/${p.id}/`} data-cat={p.data.categoria}>
-          <span class="num">{String(i + 1).padStart(2, '0')}</span>
+        <a class="row" role="listitem" href={href(lang, `/projetos/${p.id}/`)} data-cat={p.data.categoria}>
+          <span class="num">{pad(i + 1)}</span>
           <span class="main">
             <span class="title display">{p.data.titulo}</span>
-            <span class="desc">{p.data.resumo}</span>
+            <span class="desc">{localizar(p, lang).resumo}</span>
           </span>
           <span class="stack">{p.data.stack.join(' · ')}</span>
           <span class="status">
             <span class:list={['dot', { on: p.data.status === 'em desenvolvimento' }]}></span>
-            {p.data.status}
+            {t.status[p.data.status] ?? p.data.status}
           </span>
           <span class="arrow" aria-hidden="true">→</span>
         </a>

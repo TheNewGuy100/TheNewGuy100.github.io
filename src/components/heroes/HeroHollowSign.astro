@@ -1,0 +1,278 @@
+---
+/**
+ * Herói do Hollow Sign (horror de investigação): fragmentos de um arquivo de caso e sussurros surgem e somem
+ * no escuro, e uma "lanterna" que segue o mouse os revela em verde.
+ */
+import type { CollectionEntry } from 'astro:content';
+import HeroFrame from './HeroFrame.astro';
+import { getLang } from '../../i18n';
+import type { Lang } from '../../i18n';
+
+interface Props {
+  projeto: CollectionEntry<'projetos'>;
+}
+const { projeto } = Astro.props;
+const lang = getLang(Astro.url);
+
+// Dois tipos de texto, para o fundo contar uma cena em vez de ser um monte de palavras soltas:
+//  - arquivo: linhas curtas de um relatório de investigação (pequenas);
+//  - sussurros: o que a cena "diz" de volta (grandes).
+// A fonte Help Me não tem a maioria dos acentos (á é í ó ú ã õ ê ô ñ...; só ç, ¿ e ü). Por isso os textos abaixo são
+// escritos SEM esses acentos: um acento ausente cairia numa fonte de reserva e quebraria o desenho da palavra.
+// Ao incluir ou mudar textos, confira os caracteres (ver public/fonts/HelpMe.ttf). Não afirmam nada sobre a história do jogo.
+const textos: Record<Lang, { arquivo: string[]; sussurros: string[] }> = {
+  pt: {
+    arquivo: [
+      'caso 0417 em aberto', 'testemunha: nenhuma', 'quarto 4B trancado', 'sinal perdido 03:12', 'prova 03/12 ausente',
+      'porta trancada por dentro', 'luzes apagadas 02:14', 'fita 07 corrompida', 'setor c liberado', 'rec 00:41:07',
+    ],
+    sussurros: ['ainda aqui', 'ele voltou', 'esconda-se', 'ouviu isso?', 'fique quieto', 'mais perto', 'ele ouve', 'escute', 'sem luz', 'corra'],
+  },
+  en: {
+    arquivo: [
+      'case 0417 open', 'witness: none', 'room 4B locked', 'signal lost 03:12', 'evidence 03/12 missing',
+      'door locked from inside', 'lights out 02:14', 'tape 07 corrupted', 'sector c cleared', 'rec 00:41:07',
+    ],
+    sussurros: ['still here', 'it came back', 'hide', 'did you hear that?', 'stay quiet', 'closer', 'it listens', 'listen', 'no light', "don't look"],
+  },
+  es: {
+    arquivo: [
+      'caso 0417 abierto', 'testigo: ninguno', 'cuarto 4B cerrado', 'prueba 03/12 ausente', 'puerta cerrada por dentro',
+      'luces apagadas 02:14', 'cinta 07 rota', 'sector c despejado', 'rec 00:41:07', 'puerta sin forzar',
+    ],
+    sussurros: ['ya viene', 'calla', 'escucha', '¿oyes eso?', 'quieto', 'cerca', 'te oye', 'sin luz', 'corre', 'no mires'],
+  },
+};
+---
+<HeroFrame projeto={projeto}>
+  <div slot="art" class="hs" data-hs data-textos={JSON.stringify(textos[lang])}>
+    <!-- O símbolo do jogo fica em cada camada: quase invisível no escuro e revelado em cor de osso pela lanterna.
+         Os textos são acrescentados depois (por script) e ficam por cima dele. -->
+    <div class="layer dim" data-hs-dim><div class="sigilo"></div></div>
+    <div class="layer lit" data-hs-lit><div class="sigilo"></div></div>
+  </div>
+</HeroFrame>
+
+<style>
+  .hs {
+    --mx: 74%;
+    --my: 42%;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+  }
+  .dim {
+    color: #38404a;
+  }
+  /* A máscara fica numa camada do tamanho do palco, então o centro dela é a posição real do mouse. */
+  .lit {
+    color: var(--accent);
+    -webkit-mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, rgba(0, 0, 0, 0.55) 50%, transparent 100%);
+    mask-image: radial-gradient(circle 260px at var(--mx) var(--my), #000 0%, rgba(0, 0, 0, 0.55) 50%, transparent 100%);
+  }
+  /* Símbolo do Hollow Sign (public/img/projetos/hollow-sign-marca.svg), usado como máscara para poder trocar de cor. */
+  .sigilo {
+    position: absolute;
+    top: 50%;
+    right: clamp(16px, 5vw, 96px);
+    height: 92%;
+    aspect-ratio: 2 / 3;
+    transform: translateY(-50%);
+    background: currentColor;
+    -webkit-mask: url('/img/projetos/hollow-sign-marca.svg') center / contain no-repeat;
+    mask: url('/img/projetos/hollow-sign-marca.svg') center / contain no-repeat;
+  }
+  .dim .sigilo {
+    color: #1a1f26;
+  }
+  .lit .sigilo {
+    color: #f1e9db;
+  }
+  .hs :global(.w) {
+    position: absolute;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  /* Fonte "Help Me" (GGBotNet, licença SIL OFL 1.1; arquivo original e licença em /fonts). */
+  @font-face {
+    font-family: 'Help Me';
+    src: url('/fonts/HelpMe.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  .hs :global(.w) {
+    font-family: 'Help Me', var(--mono), sans-serif;
+    font-weight: 400;
+  }
+  .hs :global(.w.m) {
+    font-size: var(--fs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .hs :global(.w.d) {
+    font-size: var(--fs);
+    letter-spacing: 0.02em;
+  }
+  @media (max-width: 768px) {
+    .hs {
+      --mx: 50%;
+      --my: 15%;
+    }
+    /* No celular não há mouse, então a lanterna ficaria parada em cima do símbolo e os fios claros cruzariam o título.
+       Fica só a versão apagada, discreta, encostada à direita; a cor de osso aparece no desktop e na página do projeto. */
+    .sigilo {
+      height: 70%;
+      right: -14%;
+      top: 38%;
+    }
+    .lit .sigilo {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  function boot(): void {
+    const root = document.querySelector<HTMLElement>('[data-hs]');
+    if (!root || root.dataset.bound) return;
+    root.dataset.bound = '1';
+    const dim = root.querySelector<HTMLElement>('[data-hs-dim]');
+    const lit = root.querySelector<HTMLElement>('[data-hs-lit]');
+    if (!dim || !lit) return;
+
+    const { arquivo, sussurros }: { arquivo: string[]; sussurros: string[] } = JSON.parse(root.dataset.textos ?? '{"arquivo":[],"sussurros":[]}');
+    const stage = root.closest<HTMLElement>('[data-hero-stage]') ?? root;
+    const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Lanterna: só com mouse. As coordenadas são relativas ao palco inteiro, que é o tamanho da camada mascarada.
+    if (matchMedia('(pointer: fine)').matches) {
+      stage.addEventListener('pointermove', (e) => {
+        const r = root.getBoundingClientRect();
+        root.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        root.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+      stage.addEventListener('pointerleave', () => {
+        root.style.removeProperty('--mx');
+        root.style.removeProperty('--my');
+      });
+    }
+
+    type Caixa = { x: number; y: number; w: number; h: number; texto: string };
+    const ativas: Caixa[] = [];
+    const rand = (a: number, b: number): number => a + Math.random() * (b - a);
+    const sobrepoe = (a: Caixa, b: Caixa): boolean => a.x < b.x + b.w + 16 && b.x < a.x + a.w + 16 && a.y < b.y + b.h + 10 && b.y < a.y + a.h + 10;
+
+    // Zona onde os textos aparecem: longe do bloco de texto do herói. No desktop começa depois da borda direita do
+    // título (medida na hora, porque o título muda de tamanho com a janela); no celular é a faixa de cima.
+    function zona(w: number, h: number) {
+      if (w < 768) {
+        // A faixa de cima termina antes do primeiro texto do herói (o rótulo "Último projeto"), medido na hora.
+        const rotulo = stage.querySelector<HTMLElement>('.eyebrow');
+        const topo = rotulo ? rotulo.getBoundingClientRect().top - root!.getBoundingClientRect().top : 0.26 * h;
+        return { x0: 0.05 * w, x1: 0.95 * w, y0: 0.04 * h, y1: Math.max(0.04 * h + 60, topo - 10) };
+      }
+      const titulo = stage.querySelector<HTMLElement>('.title');
+      const direitaTitulo = titulo ? titulo.getBoundingClientRect().right - root!.getBoundingClientRect().left : 0;
+      const x1 = 0.96 * w;
+      const x0 = Math.min(Math.max(0.48 * w, direitaTitulo + 28), x1 - 200); // sempre sobra ao menos 200 px
+      return { x0, x1, y0: 0.07 * h, y1: 0.86 * h };
+    }
+
+    function surgir(estatica = false): void {
+      const w = root!.clientWidth;
+      const h = root!.clientHeight;
+      const max = w < 768 ? 3 : 6;
+      if (ativas.length >= max) return;
+
+      const grande = Math.random() < 0.35;
+      const reserva = grande ? sussurros : arquivo;
+      const livres = reserva.filter((t) => !ativas.some((a) => a.texto === t));
+      const texto = livres[Math.floor(Math.random() * livres.length)];
+      if (!texto) return;
+
+      // Frases mais longas pedem letras menores para caberem na zona sem serem cortadas na borda do palco.
+      const z = zona(w, h);
+      // Largura média de uma letra da Help Me em múltiplos do tamanho da fonte (medida: ~0,66 nas grandes, ~0,77 nas
+      // pequenas em maiúsculas com espaçamento); os valores abaixo têm folga para a frase nunca passar da borda.
+      const k = grande ? 0.7 : 0.8;
+      let tamanho = grande ? rand(40, w < 768 ? 56 : 84) : rand(15, 22);
+      // Também limita pela altura da zona (no celular a faixa é baixa) e conta a altura do texto ao sortear a posição.
+      tamanho = Math.max(11, Math.min(tamanho, (z.x1 - z.x0) / (texto.length * k), (z.y1 - z.y0) / 1.4));
+      const largura = texto.length * tamanho * k;
+      const altura = tamanho * 1.3;
+
+      let caixa: Caixa | null = null;
+      for (let i = 0; i < 12 && !caixa; i++) {
+        const c = { x: rand(z.x0, Math.max(z.x0, z.x1 - largura)), y: rand(z.y0, Math.max(z.y0, z.y1 - altura)), w: largura, h: altura, texto };
+        if (ativas.every((a) => !sobrepoe(a, c))) caixa = c;
+      }
+      if (!caixa) return;
+
+      const pico = rand(0.6, 1);
+      const duracao = rand(3200, 5600);
+      // Mesma coreografia nas duas camadas; a iluminada sempre chega ao pico máximo para a lanterna aparecer bem.
+      const quadros = (p: number): Keyframe[] => [
+        { opacity: 0, offset: 0 },
+        { opacity: p, offset: 0.22 },
+        { opacity: p, offset: 0.46 },
+        { opacity: p * 0.3, offset: 0.49 },
+        { opacity: p, offset: 0.53 },
+        { opacity: p, offset: 0.72 },
+        { opacity: 0, offset: 1 },
+      ];
+
+      ativas.push(caixa);
+      const spans = [dim!, lit!].map((camada) => {
+        const el = document.createElement('span');
+        el.className = `w ${grande ? 'd' : 'm'}`;
+        el.textContent = texto;
+        el.style.left = `${caixa!.x}px`;
+        el.style.top = `${caixa!.y}px`;
+        el.style.setProperty('--fs', `${tamanho}px`);
+        if (grande && Math.random() < 0.4) el.style.filter = 'blur(1.5px)';
+        camada.append(el);
+        return el;
+      });
+
+      if (estatica) {
+        spans.forEach((el, i) => (el.style.opacity = String(i === 0 ? pico * 0.7 : 1)));
+        return;
+      }
+      const anims = spans.map((el, i) => el.animate(quadros(i === 0 ? pico : 1), { duration: duracao, easing: 'ease-in-out' }));
+      anims[0].onfinish = () => {
+        spans.forEach((el) => el.remove());
+        ativas.splice(ativas.indexOf(caixa!), 1);
+      };
+    }
+
+    function laco(): void {
+      if (!root!.isConnected) return;
+      if (!document.hidden) surgir();
+      setTimeout(laco, rand(550, 1300));
+    }
+
+    // Só começa com a fonte carregada (ou depois de 2,5 s): evita os primeiros textos saírem na fonte de reserva.
+    const fonte = document.fonts
+      ? Promise.race([document.fonts.load('24px "Help Me"', 'abc'), new Promise((r) => setTimeout(r, 2500))])
+      : Promise.resolve();
+    fonte.then(() => {
+      if (!root!.isConnected) return;
+      if (reduzir) {
+        for (let i = 0; i < 5; i++) surgir(true);
+        return;
+      }
+      for (let i = 0; i < 3; i++) setTimeout(surgir, i * 350);
+      laco();
+    });
+  }
+
+  document.addEventListener('astro:page-load', boot);
+  boot();
+</script>

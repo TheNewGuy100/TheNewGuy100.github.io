@@ -1,0 +1,27 @@
+---
+/** Herói de reserva: usado por todo projeto que ainda não tem herói dedicado em `heroes/index.ts`. */
+import type { CollectionEntry } from 'astro:content';
+import HeroFrame from './HeroFrame.astro';
+
+interface Props {
+  projeto: CollectionEntry<'projetos'>;
+}
+const { projeto } = Astro.props;
+---
+<HeroFrame projeto={projeto}>
+  <div slot="art" class="grade"></div>
+</HeroFrame>
+
+<style>
+  .grade {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 90% at 78% 40%, #000, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 90% at 78% 40%, #000, transparent 75%);
+  }
+</style>

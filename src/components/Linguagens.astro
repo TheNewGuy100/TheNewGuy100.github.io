@@ -1,30 +1,38 @@
 ---
-import { linguagens, niveis } from '../data/perfil';
+import { linguagens, contextos } from '../data/perfil';
+import type { Contexto } from '../data/perfil';
 import { iconPath } from '../lib/icons';
+import { getLang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+const lang = getLang(Astro.url);
+const t = ui(lang);
+const ordem: Contexto[] = ['producao', 'projetos', 'estudo'];
 ---
 <section id="linguagens" class="wrap sec">
   <div class="head">
-    <p class="kicker">03 / Linguagens</p>
-    <ul class="legend" aria-label="Legenda de níveis">
-      {Object.values(niveis).map((n) => (
-        <li><span class="dot" style={`background:${n.cor}`}></span>{n.rotulo}</li>
+    <p class="kicker">{t.linguagens.kicker}</p>
+    <ul class="legend" aria-label={t.linguagens.legenda}>
+      {ordem.map((c) => (
+        <li><span class="dot" style={`background:${contextos[c].cor}`}></span>{t.linguagens.contextos[c]}</li>
       ))}
     </ul>
   </div>
   <ul class="grid">
     {linguagens.map((l) => {
-      const n = niveis[l.nivel];
+      const cor = contextos[l.contexto].cor;
       const path = iconPath(l.slug);
       return (
-        <li class="card" style={`--cor:${n.cor}`}>
+        <li class="card" style={`--cor:${cor}`}>
           <span class="ic" aria-hidden="true">
             {path ? <svg viewBox="0 0 24 24"><path d={path} fill="currentColor" /></svg> : <span class="mono">{l.mono}</span>}
           </span>
           <span class="txt">
             <strong>{l.nome}</strong>
-            <span class="lv">{n.rotulo}</span>
+            <span class="lv">{t.linguagens.contextos[l.contexto]}</span>
+            {l.provas.length > 0 && <span class="proof">{l.provas.join(' · ')}</span>}
           </span>
-          <span class="bar" role="img" aria-label={`Nível ${n.rotulo}`}><span style={`width:${n.pct}%`}></span></span>
+          <span class="bar" aria-hidden="true"></span>
         </li>
       );
     })}
@@ -75,7 +83,7 @@ import { iconPath } from '../lib/icons';
     align-items: center;
     gap: 18px;
     height: 104px;
-    padding: 0 24px 4px;
+    padding: 0 24px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -108,15 +116,17 @@ import { iconPath } from '../lib/icons';
     text-transform: uppercase;
     color: var(--cor);
   }
+  .proof {
+    font: 400 11px/1.3 var(--mono);
+    color: var(--muted);
+  }
+  .txt {
+    min-width: 0;
+  }
   .bar {
     position: absolute;
-    inset: auto 0 0 0;
-    height: 4px;
-    background: var(--border);
-  }
-  .bar span {
-    display: block;
-    height: 100%;
+    inset: 0 auto 0 0;
+    width: 3px;
     background: var(--cor);
   }
   @media (max-width: 960px) {

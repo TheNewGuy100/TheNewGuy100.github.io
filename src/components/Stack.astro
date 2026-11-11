@@ -1,15 +1,21 @@
 ---
-import { stack, praticas } from '../data/perfil';
+import { stack } from '../data/perfil';
+import { praticas, stackGrupos } from '../i18n/perfil';
+import { getLang, pad } from '../i18n';
+import { ui } from '../i18n/ui';
 import Tile from './Tile.astro';
+
+const lang = getLang(Astro.url);
+const t = ui(lang);
 ---
 <section id="stack" class="wrap sec">
-  <p class="kicker">04 / Stack</p>
+  <p class="kicker">{t.stack.kicker}</p>
   <div class="groups">
     {stack.map((g) => (
       <div class="group">
         <div class="meta">
-          <h3 class="kicker">{g.grupo}</h3>
-          <p class="count">{String(g.itens.length).padStart(2, '0')} tecnologias</p>
+          <h3 class="kicker">{stackGrupos[g.id][lang]}</h3>
+          <p class="count">{t.stack.n(g.itens.length).replace(String(g.itens.length), pad(g.itens.length))}</p>
         </div>
         <ul class="tiles">
           {g.itens.map((i) => <Tile nome={i.nome} slug={i.slug} mono={i.mono} />)}
@@ -18,10 +24,10 @@ import Tile from './Tile.astro';
     ))}
     <div class="group">
       <div class="meta">
-        <h3 class="kicker">Métodos e práticas</h3>
+        <h3 class="kicker">{t.stack.praticas}</h3>
       </div>
       <ul class="chips">
-        {praticas.map((p) => <li class="tag">{p}</li>)}
+        {praticas.map((p) => <li class="tag">{p[lang]}</li>)}
       </ul>
     </div>
   </div>

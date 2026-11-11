@@ -1,10 +1,11 @@
 import { isOn, onChange, setSound } from './audio';
 import { startEqBars } from './eq';
 
+/** O som só existe na página do VibeDeck. Os textos vêm de `data-on` / `data-off` no próprio elemento (já traduzidos). */
 function syncSound(): void {
   const on = isOn();
   document.querySelectorAll<HTMLElement>('[data-sound-label]').forEach((el) => {
-    el.textContent = on ? 'som on' : 'som off';
+    el.textContent = (on ? el.dataset.on : el.dataset.off) ?? '';
   });
   document.querySelectorAll<HTMLElement>('[data-sound-toggle]').forEach((el) => {
     el.setAttribute('aria-pressed', String(on));
@@ -13,6 +14,11 @@ function syncSound(): void {
   document.querySelectorAll<HTMLElement>('[data-play-icon]').forEach((el) => {
     el.textContent = on ? '❚❚' : '▶';
   });
+}
+
+/** Navegou para uma página sem controle de som: pausa a trilha para não tocar sem ter como parar. */
+function stopSoundWithoutControl(): void {
+  if (isOn() && !document.querySelector('[data-sound-toggle]')) void setSound(false);
 }
 
 function setMenu(open: boolean): void {
@@ -67,6 +73,15 @@ function bindGlobal(): void {
       await setSound(!isOn());
       return;
     }
+    const choice = target.closest<HTMLElement>('[data-lang-choice]');
+    if (choice) {
+      try {
+        localStorage.setItem('lang', choice.dataset.langChoice ?? '');
+      } catch {
+        // Sem armazenamento: a escolha vale só para esta navegação.
+      }
+      return;
+    }
     if (target.closest('[data-menu-open]')) return setMenu(true);
     if (target.closest('[data-menu-close]')) return setMenu(false);
     if (target.closest('#menu a')) setMenu(false);
@@ -85,7 +100,7 @@ function bindGlobal(): void {
       copy.type = 'button';
       copy.className = 'email-copy';
       copy.dataset.emailCopy = addr;
-      copy.textContent = '[ copiar ]';
+      copy.textContent = reveal.dataset.copyLabel ?? '[ copy ]';
       holder.append(link, copy);
       return;
     }
@@ -95,11 +110,11 @@ function bindGlobal(): void {
       try {
         await navigator.clipboard.writeText(copy.dataset.emailCopy ?? '');
         document.querySelectorAll<HTMLElement>('[data-copy-status]').forEach((s) => {
-          s.textContent = '✓ e-mail copiado para a área de transferência';
+          s.textContent = s.dataset.ok ?? '✓';
         });
       } catch {
         document.querySelectorAll<HTMLElement>('[data-copy-status]').forEach((s) => {
-          s.textContent = 'não foi possível copiar; use o link acima';
+          s.textContent = s.dataset.err ?? '';
         });
       }
     }
@@ -112,6 +127,7 @@ function bindGlobal(): void {
 
 function init(): void {
   bindGlobal();
+  stopSoundWithoutControl();
   syncSound();
   initFilters();
   initEqs();

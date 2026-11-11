@@ -1,24 +1,29 @@
 ---
-import { sobre, experiencia, formacao } from '../data/perfil';
+import { getLang } from '../i18n';
+import { ui } from '../i18n/ui';
+import { sobre, experiencia, formacao, presente } from '../i18n/perfil';
+
+const lang = getLang(Astro.url);
+const t = ui(lang);
 ---
 <section id="sobre" class="wrap sec">
-  <p class="kicker">01 / Sobre</p>
-  <p class="display lead">{sobre}</p>
+  <p class="kicker">{t.sobre.kicker}</p>
+  <p class="display lead">{sobre[lang]}</p>
 
-  <p class="label sub">Experiência</p>
+  <p class="label sub">{t.sobre.experiencia}</p>
   <ol class="exp">
     {experiencia.map((e) => (
       <li>
-        <time>{e.periodo}</time>
-        <strong>{e.cargo}</strong>
+        <time>{e.inicio} – {e.fim ?? presente[lang]}</time>
+        <strong>{e.cargo[lang]}</strong>
         <span>{e.empresa}</span>
       </li>
     ))}
   </ol>
 
-  <p class="label sub">Formação</p>
+  <p class="label sub">{t.sobre.formacao}</p>
   <ul class="edu">
-    {formacao.map((f) => <li>{f}</li>)}
+    {formacao.map((f) => <li>{f[lang]}</li>)}
   </ul>
 </section>
 
@@ -41,7 +46,7 @@ import { sobre, experiencia, formacao } from '../data/perfil';
     padding: 0;
     margin: 0 0 48px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 32px;
   }
   .exp li {
@@ -66,6 +71,11 @@ import { sobre, experiencia, formacao } from '../data/perfil';
     display: flex;
     gap: 40px;
     flex-wrap: wrap;
+  }
+  @media (max-width: 1180px) {
+    .exp {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
   @media (max-width: 960px) {
     .exp {

@@ -12,29 +12,45 @@ import '@fontsource/inter/600.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Menu from '../components/Menu.astro';
-import Player from '../components/Player.astro';
+import { getLang, htmlLang, langs, stripLang, href } from '../i18n';
+import { ui } from '../i18n/ui';
 
 interface Props {
   title?: string;
   description?: string;
 }
 
-const {
-  title = 'Pedro Henrique Bohn Costa',
-  description = 'Portfólio de Pedro Henrique Bohn Costa: Full Stack, game dev e segurança ofensiva.',
-} = Astro.props;
+const lang = getLang(Astro.url);
+const t = ui(lang);
+const { title = t.meta.titulo, description = t.meta.descricao } = Astro.props;
+
+const base = stripLang(Astro.url.pathname);
+const origin = Astro.site ?? new URL(Astro.url.origin);
+const abs = (l: (typeof langs)[number]) => new URL(href(l, base), origin).href;
 ---
 <!doctype html>
-<html lang="pt-BR">
+<html lang={htmlLang[lang]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0b0d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={htmlLang[lang].replace('-', '_')} />
+    <link rel="canonical" href={abs(lang)} />
+    {langs.map((l) => <link rel="alternate" hreflang={htmlLang[l]} href={abs(l)} />)}
+    <link rel="alternate" hreflang="x-default" href={abs('pt')} />
     <title>{title}</title>
-    <script is:inline data-astro-rerun>
+    <script is:inline>
+      // Primeira visita à raiz em português: se o navegador está em inglês ou espanhol, abre a versão correspondente.
+      // Quem escolhe o idioma no seletor grava a preferência e nunca é redirecionado.
       try {
-        if (sessionStorage.getItem('vd-entered')) document.documentElement.classList.add('entered');
+        if (location.pathname === '/' && !localStorage.getItem('lang')) {
+          var l = (navigator.language || '').slice(0, 2);
+          if (l === 'en' || l === 'es') location.replace('/' + l + '/' + location.hash);
+        }
       } catch (e) {}
     </script>
     <ClientRouter />
@@ -45,7 +61,6 @@ const {
       <slot />
     </main>
     <Menu />
-    <Player transition:persist />
     <script>
       import '../scripts/ui';
     </script>
