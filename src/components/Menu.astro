@@ -45,7 +45,7 @@ const items = [
         ))}
         <li><span class="key">email</span><span class="email-line"><button type="button" class="reveal" data-email-reveal data-b64={emailB64} data-copy-label={t.contato.copiar}>{t.contato.revelar}</button></span></li>
       </ul>
-      <a class="btn cv" href={curriculo} download>{t.nav.cv}</a>
+      <a class="btn cv" href={curriculo(lang).href} download={curriculo(lang).nome}>{t.nav.cv}</a>
     </aside>
   </div>
   <canvas class="floor" data-eq data-count="96" data-gap="5" data-alpha="0.3" data-idle="0.5" aria-hidden="true"></canvas>

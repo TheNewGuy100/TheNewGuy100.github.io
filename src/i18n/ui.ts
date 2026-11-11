@@ -50,7 +50,6 @@ const pt = {
     copiado: '✓ e-mail copiado para a área de transferência',
     copiarErro: 'não foi possível copiar; use o link acima',
     baixar: '[ baixar ]',
-    cvArquivo: 'curriculo.pdf',
   },
   projetos: {
     titulo: 'Projetos',
@@ -171,7 +170,6 @@ const en: Dict = {
     copiado: '✓ email copied to the clipboard',
     copiarErro: 'could not copy; use the link above',
     baixar: '[ download ]',
-    cvArquivo: 'resume.pdf',
   },
   projetos: {
     titulo: 'Projects',
@@ -259,7 +257,7 @@ const es: Dict = {
     stackDesc: 'herramientas',
     contato: 'Contacto',
     contatoDesc: 'correo · currículum',
-    cv: 'Descargar currículum (PDF)',
+    cv: 'Descargar currículum (PDF, en inglés)',
   },
   hero: {
     ultimo: 'Último proyecto',
@@ -290,7 +288,6 @@ const es: Dict = {
     copiado: '✓ correo copiado al portapapeles',
     copiarErro: 'no se pudo copiar; usa el enlace de arriba',
     baixar: '[ descargar ]',
-    cvArquivo: 'curriculum.pdf',
   },
   projetos: {
     titulo: 'Proyectos',

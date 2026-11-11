@@ -5,6 +5,7 @@ import { ui } from '../i18n/ui';
 
 const lang = getLang(Astro.url);
 const t = ui(lang).contato;
+const cv = curriculo(lang);
 ---
 <section id="contato" class="wrap sec">
   <p class="kicker">{t.kicker}</p>
@@ -40,8 +41,8 @@ const t = ui(lang).contato;
         <p class="cmd"><span class="p">$</span> contact --cv</p>
         <ul class="out">
           <li>
-            <span class="key">{t.cvArquivo}</span>
-            <a class="dl" href={curriculo} download>{t.baixar}</a>
+            <span class="key">{cv.arquivo}</span>
+            <a class="dl" href={cv.href} download={cv.nome}>{t.baixar}</a>
           </li>
         </ul>
         <p class="status" data-copy-status data-ok={t.copiado} data-err={t.copiarErro} aria-live="polite"></p>
