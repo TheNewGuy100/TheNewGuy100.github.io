@@ -1,56 +1,64 @@
 ---
 import { getCollection, render } from 'astro:content';
-import Base from '../../layouts/Base.astro';
+import Base from '../../../layouts/Base.astro';
+import { getLang, href, langPaths, pad } from '../../../i18n';
+import { ui } from '../../../i18n/ui';
+import { localizar } from '../../../i18n/projetos';
 
 export async function getStaticPaths() {
   const todos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
-  return todos
-    .map((p, i) => ({ p, i }))
-    .filter(({ p }) => !p.data.paginaPropria)
-    .map(({ p, i }) => ({
-      params: { slug: p.id },
-      props: { projeto: p, indice: i + 1, total: todos.length, anterior: todos[i - 1], proximo: todos[i + 1] },
-    }));
+  return langPaths().flatMap(({ params }) =>
+    todos
+      .map((p, i) => ({ p, i }))
+      .filter(({ p }) => !p.data.paginaPropria)
+      .map(({ p, i }) => ({
+        params: { ...params, slug: p.id },
+        props: { projeto: p, indice: i + 1, total: todos.length, anterior: todos[i - 1], proximo: todos[i + 1] },
+      })),
+  );
 }
 
 const { projeto, indice, total, anterior, proximo } = Astro.props;
+const lang = getLang(Astro.url);
+const t = ui(lang);
 const { Content } = await render(projeto);
 const d = projeto.data;
+const loc = localizar(projeto, lang);
 ---
-<Base title={`${d.titulo} · Pedro Henrique Bohn Costa`} description={d.resumo}>
+<Base title={`${d.titulo} · Pedro Henrique Bohn Costa`} description={loc.resumo}>
   <div class="wrap page">
     <div class="top">
-      <a class="back" href="/projetos/">← Projetos</a>
-      <span class="idx">{String(indice).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
+      <a class="back" href={href(lang, '/projetos/')}>{t.projeto.voltar}</a>
+      <span class="idx">{pad(indice)} / {pad(total)}</span>
     </div>
     <h1 class="display">{d.titulo}.</h1>
     {d.tagline && <p class="tagline">{d.tagline}</p>}
 
     <dl class="meta">
-      <div><dt class="label">Status</dt><dd class="ok">{d.status}</dd></div>
-      <div><dt class="label">Stack</dt><dd>{d.stack.join(' · ')}</dd></div>
-      <div><dt class="label">Tipo</dt><dd>{d.tipo}</dd></div>
-      {d.repo && <div><dt class="label">Código</dt><dd><a href={d.repo} target="_blank" rel="noopener noreferrer">{d.repo.replace('https://', '')} ↗</a></dd></div>}
+      <div><dt class="label">{t.projeto.status}</dt><dd class="ok">{t.status[d.status] ?? d.status}</dd></div>
+      <div><dt class="label">{t.projeto.stack}</dt><dd>{d.stack.join(' · ')}</dd></div>
+      <div><dt class="label">{t.projeto.tipo}</dt><dd>{t.tipos[d.tipo] ?? d.tipo}</dd></div>
+      {d.repo && <div><dt class="label">{t.projeto.codigo}</dt><dd><a href={d.repo} target="_blank" rel="noopener noreferrer">{d.repo.replace('https://', '')} ↗</a></dd></div>}
     </dl>
 
     {d.capa && (
-      <figure class="capa">
-        <img src={d.capa.src} alt={d.capa.alt} loading="lazy" />
+      <figure class:list={['capa', { retrato: d.capa.retrato }]}>
+        <img src={d.capa.src} alt={loc.capaAlt ?? d.capa.alt} loading="lazy" />
       </figure>
     )}
 
     <section class="about">
-      <p class="kicker">01 / Sobre o projeto</p>
-      <div class="display text"><Content /></div>
+      <p class="kicker">{t.projeto.sobre}</p>
+      <div class="display text">{loc.corpo ? <p>{loc.corpo}</p> : <Content />}</div>
     </section>
 
-    {d.destaques.length > 0 && (
+    {loc.destaques.length > 0 && (
       <section>
-        <p class="kicker">02 / O que faz</p>
+        <p class="kicker">{t.projeto.faz}</p>
         <ul class="cards">
-          {d.destaques.map((c, i) => (
+          {loc.destaques.map((c, i) => (
             <li>
-              <span class="n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="n">{pad(i + 1)}</span>
               <h3 class="display">{c.titulo}</h3>
               <p>{c.texto}</p>
             </li>
@@ -59,14 +67,14 @@ const d = projeto.data;
       </section>
     )}
 
-    <nav class="pager" aria-label="Outros projetos">
+    <nav class="pager" aria-label={t.projeto.outros}>
       <div>
-        <p class="label">Anterior</p>
-        {anterior ? <a class="display" href={`/projetos/${anterior.id}/`}>← {anterior.data.titulo}</a> : <span class="display none">—</span>}
+        <p class="label">{t.projeto.anterior}</p>
+        {anterior ? <a class="display" href={href(lang, `/projetos/${anterior.id}/`)}>← {anterior.data.titulo}</a> : <span class="display none">—</span>}
       </div>
       <div class="r">
-        <p class="label">Próximo</p>
-        {proximo ? <a class="display" href={`/projetos/${proximo.id}/`}>{proximo.data.titulo} →</a> : <span class="display none">—</span>}
+        <p class="label">{t.projeto.proximo}</p>
+        {proximo ? <a class="display" href={href(lang, `/projetos/${proximo.id}/`)}>{proximo.data.titulo} →</a> : <span class="display none">—</span>}
       </div>
     </nav>
   </div>
@@ -137,6 +145,14 @@ const d = projeto.data;
     max-width: 100%;
     height: auto;
     border-radius: 6px;
+  }
+  .capa.retrato {
+    padding-block: 40px;
+  }
+  .capa.retrato img {
+    width: auto;
+    height: min(560px, 70vh);
+    border-radius: 0;
   }
   .about,
   section + section {

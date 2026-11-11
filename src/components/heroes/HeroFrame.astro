@@ -1,0 +1,176 @@
+---
+/**
+ * Moldura comum dos heróis de projeto: palco de 65% da altura da janela, textos e botões.
+ * Cada herói dedicado usa esta moldura e coloca a sua arte no slot `art` (camada que cobre o palco todo).
+ */
+import type { CollectionEntry } from 'astro:content';
+import { getLang, href, mesAno } from '../../i18n';
+import { ui } from '../../i18n/ui';
+import { localizar } from '../../i18n/projetos';
+
+interface Props {
+  projeto: CollectionEntry<'projetos'>;
+}
+
+const { projeto } = Astro.props;
+const lang = getLang(Astro.url);
+const t = ui(lang);
+const d = projeto.data;
+const loc = localizar(projeto, lang);
+---
+<div class="stage" data-hero-stage>
+  <div class="art" aria-hidden="true">
+    <slot name="art" />
+  </div>
+
+  <div class="wrap inner">
+    <p class="kicker eyebrow">
+      <span class="live" aria-hidden="true"></span>
+      {t.hero.ultimo}
+      {d.atualizado && <span class="when"><span class="sep"> · </span>{t.hero.atualizado} {mesAno(lang, d.atualizado)}</span>}
+    </p>
+    <h2 class="display title">{d.titulo}.</h2>
+    <p class="resumo">{loc.resumo}</p>
+    <ul class="chips" aria-label={t.projeto.stack}>
+      {d.stack.map((s) => <li class="tag">{s}</li>)}
+      <li class="tag status"><span class="dot" aria-hidden="true"></span>{t.status[d.status] ?? d.status}</li>
+    </ul>
+    <div class="actions">
+      <a class="btn" href={href(lang, `/projetos/${projeto.id}/`)}>{t.hero.ver} <span aria-hidden="true">&nbsp;→</span></a>
+      <a class="btn ghost" href={href(lang, '/projetos/')}>{t.hero.todos}</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stage {
+    --mx: 74%;
+    --my: 38%;
+    position: relative;
+    overflow: hidden;
+    height: 65vh;
+    height: 65svh;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .art {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 80% at 78% 40%, rgba(53, 242, 160, 0.05), transparent 70%),
+      linear-gradient(180deg, rgba(10, 11, 13, 0) 55%, var(--bg) 100%);
+  }
+  /* Texto centralizado na vertical, um pouco acima do meio. */
+  .inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding-block: 32px 8vh;
+  }
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .when {
+    color: var(--muted);
+  }
+  .live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(53, 242, 160, 0.6);
+    animation: pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse {
+    70% {
+      box-shadow: 0 0 0 10px rgba(53, 242, 160, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(53, 242, 160, 0);
+    }
+  }
+  .title {
+    font-size: clamp(76px, 12.5vw, 184px);
+    line-height: 0.88;
+  }
+  .resumo {
+    margin: 0;
+    max-width: 560px;
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chips .tag {
+    height: 32px;
+    font: 400 13px var(--mono);
+  }
+  .status {
+    gap: 8px;
+    color: var(--accent);
+    border-color: rgba(53, 242, 160, 0.4);
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  @media (max-width: 768px) {
+    .stage {
+      min-height: 460px;
+    }
+    .inner {
+      padding-block: 24px 28px;
+      gap: 14px;
+    }
+    .title {
+      font-size: clamp(64px, 20vw, 96px);
+    }
+    .resumo {
+      font-size: 16px;
+    }
+    .actions {
+      align-self: stretch;
+      gap: 10px;
+    }
+    .actions .btn {
+      flex: 1;
+      padding-inline: 12px;
+      font-size: 15px;
+    }
+    .sep {
+      display: none;
+    }
+    .when {
+      flex-basis: 100%;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .live {
+      animation: none;
+    }
+  }
+</style>

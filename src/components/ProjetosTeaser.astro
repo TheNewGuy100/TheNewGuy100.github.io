@@ -1,14 +1,19 @@
 ---
 import { getCollection } from 'astro:content';
+import { getLang, href, pad } from '../i18n';
+import { ui } from '../i18n/ui';
+
+const lang = getLang(Astro.url);
+const t = ui(lang);
 const projetos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
 const nomes = projetos.map((p) => p.data.titulo).join(' · ');
 ---
 <section id="projetos" class="wrap sec">
-  <p class="kicker">02 / Projetos</p>
-  <a class="teaser" href="/projetos/">
-    <span class="t display">Ver todos os projetos</span>
+  <p class="kicker">{t.teaser.kicker}</p>
+  <a class="teaser" href={href(lang, '/projetos/')}>
+    <span class="t display">{t.teaser.ver}</span>
     <span class="info">
-      <span class="count">{String(projetos.length).padStart(2, '0')} projetos</span>
+      <span class="count">{t.teaser.n(projetos.length).replace(String(projetos.length), pad(projetos.length))}</span>
       <span class="names">{nomes}</span>
     </span>
     <span class="arrow" aria-hidden="true">→</span>

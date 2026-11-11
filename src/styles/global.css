@@ -13,13 +13,11 @@
   --body: 'Inter', system-ui, sans-serif;
   --pad: clamp(20px, 4.5vw, 64px);
   --header: 96px;
-  --player: 72px;
 }
 
 @media (max-width: 768px) {
   :root {
     --header: 64px;
-    --player: 64px;
   }
 }
 
@@ -38,7 +36,6 @@ body {
   background: var(--bg);
   color: var(--text);
   font: 400 16px/1.5 var(--body);
-  padding-bottom: var(--player);
   -webkit-font-smoothing: antialiased;
 }
 

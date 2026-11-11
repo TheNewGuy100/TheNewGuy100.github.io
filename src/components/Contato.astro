@@ -1,18 +1,24 @@
 ---
 import { links, emailB64, curriculo } from '../data/contato';
+import { getLang } from '../i18n';
+import { ui } from '../i18n/ui';
+
+const lang = getLang(Astro.url);
+const t = ui(lang).contato;
+const cv = curriculo(lang);
 ---
 <section id="contato" class="wrap sec">
-  <p class="kicker">05 / Contato</p>
+  <p class="kicker">{t.kicker}</p>
   <div class="grid">
     <div class="left">
-      <h2 class="display">Vamos<br />conversar.</h2>
-      <p class="muted">Respondo por e-mail ou LinkedIn.<br />O currículo está logo abaixo.</p>
+      <h2 class="display">{t.titulo[0]}<br />{t.titulo[1]}</h2>
+      <p class="muted">{t.texto[0]}<br />{t.texto[1]}</p>
     </div>
 
-    <div class="term" role="group" aria-label="Contato em formato de terminal">
+    <div class="term" role="group" aria-label={t.termAria}>
       <div class="titlebar">
         <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span class="ttl">pedro@portfolio: ~/contato</span>
+        <span class="ttl">{t.termTitulo}</span>
       </div>
       <div class="body">
         <p class="cmd"><span class="p">$</span> contact --list</p>
@@ -29,17 +35,17 @@ import { links, emailB64, curriculo } from '../data/contato';
           ))}
           <li>
             <span class="key">email</span>
-            <span class="email-line"><button type="button" class="reveal" data-email-reveal data-b64={emailB64}>[ revelar e-mail ]</button></span>
+            <span class="email-line"><button type="button" class="reveal" data-email-reveal data-b64={emailB64} data-copy-label={t.copiar}>{t.revelar}</button></span>
           </li>
         </ul>
         <p class="cmd"><span class="p">$</span> contact --cv</p>
         <ul class="out">
           <li>
-            <span class="key">curriculo.pdf</span>
-            <a class="dl" href={curriculo} download>[ baixar ]</a>
+            <span class="key">{cv.arquivo}</span>
+            <a class="dl" href={cv.href} download={cv.nome}>{t.baixar}</a>
           </li>
         </ul>
-        <p class="status" data-copy-status aria-live="polite"></p>
+        <p class="status" data-copy-status data-ok={t.copiado} data-err={t.copiarErro} aria-live="polite"></p>
         <p class="cmd"><span class="p">$</span> <span class="cursor" aria-hidden="true"></span></p>
       </div>
     </div>

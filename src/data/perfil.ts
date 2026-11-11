@@ -1,26 +1,4 @@
-export const sobre =
-  'Desenvolvedor Full Stack desde 2020, com foco em back-end e automação de testes — e, fora do expediente, criador de jogos e ferramentas de modding.';
-
-export const experiencia = [
-  { periodo: '01/2024 – 12/2025', cargo: 'Analista de Desenvolvimento', empresa: 'FI Group' },
-  { periodo: '10/2023 – 01/2024', cargo: 'Desenvolvedor de automação de testes', empresa: 'Aliare' },
-  { periodo: '04/2021 – 04/2023', cargo: 'Desenvolvedor Back-end Júnior', empresa: 'Compass UOL' },
-  { periodo: '12/2020 – 02/2021', cargo: 'Estagiário, Formação em Desenvolvimento Web', empresa: 'Metta' },
-];
-
-export const formacao = [
-  'Bacharelado em Ciências da Computação · URI · 2025',
-  'Pós em Cyber Offensive e Red Team Operations · Impacta Digital · previsto 05/2027',
-];
-
-export type Nivel = 'basico' | 'junior' | 'pleno' | 'senior';
-
-export const niveis: Record<Nivel, { rotulo: string; cor: string; pct: number }> = {
-  basico: { rotulo: 'Básico', cor: 'var(--danger)', pct: 25 },
-  junior: { rotulo: 'Júnior', cor: 'var(--warn)', pct: 50 },
-  pleno: { rotulo: 'Pleno', cor: 'var(--accent)', pct: 75 },
-  senior: { rotulo: 'Sênior', cor: 'var(--senior)', pct: 100 },
-};
+/** Dados do perfil que não mudam de idioma. Os textos traduzíveis (sobre, experiência, formação, práticas) ficam em `src/i18n/perfil.ts`. */
 
 export interface Item {
   nome: string;
@@ -29,20 +7,36 @@ export interface Item {
   mono?: string;
 }
 
-export const linguagens: (Item & { nivel: Nivel })[] = [
-  { nome: 'TypeScript', slug: 'typescript', nivel: 'pleno' },
-  { nome: 'JavaScript', slug: 'javascript', nivel: 'pleno' },
-  { nome: 'C#', mono: 'C#', nivel: 'pleno' },
-  { nome: 'Java', slug: 'openjdk', nivel: 'pleno' },
-  { nome: 'Python', slug: 'python', nivel: 'junior' },
-  { nome: 'C++', slug: 'cplusplus', nivel: 'junior' },
-  { nome: 'C', slug: 'c', nivel: 'basico' },
-  { nome: 'Lua', mono: 'Lua', nivel: 'junior' },
+/**
+ * Em vez de um nível autodeclarado (Básico/Júnior/Pleno/Sênior), cada linguagem mostra onde ela já foi usada de verdade:
+ * - producao: trabalho profissional;
+ * - projetos: projetos pessoais ou acadêmicos que estão no portfólio;
+ * - estudo: ainda em aprendizado.
+ * `provas` lista empresas ou projetos que comprovam o uso (nomes próprios, iguais em todos os idiomas).
+ */
+export type Contexto = 'producao' | 'projetos' | 'estudo';
+
+export const contextos: Record<Contexto, { cor: string }> = {
+  producao: { cor: 'var(--accent)' },
+  projetos: { cor: 'var(--senior)' },
+  estudo: { cor: 'var(--warn)' },
+};
+
+export const linguagens: (Item & { contexto: Contexto; provas: string[] })[] = [
+  { nome: 'TypeScript', slug: 'typescript', contexto: 'producao', provas: ['FI Group', 'Compasso UOL'] },
+  { nome: 'JavaScript', slug: 'javascript', contexto: 'producao', provas: ['FI Group', 'Compasso UOL'] },
+  { nome: 'C#', mono: 'C#', contexto: 'projetos', provas: ['Hollow Sign', 'B2U', 'ImageEditor'] },
+  { nome: 'Java', slug: 'openjdk', contexto: 'projetos', provas: [] },
+  { nome: 'Python', slug: 'python', contexto: 'projetos', provas: ['HumansVSZombies', 'uberGraph'] },
+  { nome: 'C++', slug: 'cplusplus', contexto: 'projetos', provas: ['OpenGL'] },
+  { nome: 'C', slug: 'c', contexto: 'estudo', provas: [] },
+  { nome: 'Lua', mono: 'Lua', contexto: 'projetos', provas: ['ShipVsMeteors'] },
 ];
 
-export const stack: { grupo: string; itens: Item[] }[] = [
+/** `id` liga o grupo ao nome traduzido em `stackGrupos` (`src/i18n/perfil.ts`). */
+export const stack: { id: string; itens: Item[] }[] = [
   {
-    grupo: 'Frontend',
+    id: 'frontend',
     itens: [
       { nome: 'Angular', slug: 'angular' },
       { nome: 'React', slug: 'react' },
@@ -52,7 +46,7 @@ export const stack: { grupo: string; itens: Item[] }[] = [
     ],
   },
   {
-    grupo: 'Backend e dados',
+    id: 'backend',
     itens: [
       { nome: 'Node.js', slug: 'nodedotjs' },
       { nome: 'Express', slug: 'express' },
@@ -64,7 +58,7 @@ export const stack: { grupo: string; itens: Item[] }[] = [
     ],
   },
   {
-    grupo: 'Testes e DevOps',
+    id: 'testes',
     itens: [
       { nome: 'Jest', slug: 'jest' },
       { nome: 'Cypress', slug: 'cypress' },
@@ -76,7 +70,7 @@ export const stack: { grupo: string; itens: Item[] }[] = [
     ],
   },
   {
-    grupo: 'Versionamento e IDE',
+    id: 'versionamento',
     itens: [
       { nome: 'Git', slug: 'git' },
       { nome: 'GitLab', slug: 'gitlab' },
@@ -86,7 +80,7 @@ export const stack: { grupo: string; itens: Item[] }[] = [
     ],
   },
   {
-    grupo: 'Gestão, APIs e design',
+    id: 'gestao',
     itens: [
       { nome: 'Jira', slug: 'jira' },
       { nome: 'Confluence', slug: 'confluence' },
@@ -96,7 +90,7 @@ export const stack: { grupo: string; itens: Item[] }[] = [
     ],
   },
   {
-    grupo: 'Game dev',
+    id: 'game',
     itens: [
       { nome: 'Unity', slug: 'unity' },
       { nome: 'Unreal Engine', slug: 'unrealengine' },
@@ -104,15 +98,4 @@ export const stack: { grupo: string; itens: Item[] }[] = [
       { nome: 'Lua', mono: 'Lua' },
     ],
   },
-];
-
-export const praticas = [
-  'Scrum',
-  'Kanban',
-  'REST APIs',
-  'Microsserviços',
-  'Revisão de código',
-  'Automação de testes',
-  'Documentação técnica',
-  'IA para eficiência',
 ];

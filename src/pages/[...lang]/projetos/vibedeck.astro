@@ -1,22 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
-import Tile from '../../components/Tile.astro';
+import Base from '../../../layouts/Base.astro';
+import Tile from '../../../components/Tile.astro';
+import { getLang, href, langPaths, pad } from '../../../i18n';
+import { ui } from '../../../i18n/ui';
 
+export function getStaticPaths() {
+  return langPaths();
+}
+
+const lang = getLang(Astro.url);
+const ti = ui(lang);
+const t = ti.vibedeck;
 const todos = (await getCollection('projetos')).sort((a, b) => a.data.ordem - b.data.ordem);
 const idx = todos.findIndex((p) => p.id === 'vibedeck');
 const anterior = todos[idx - 1];
 
-const funcionalidades = [
-  ['Reprodução local', 'Fila com controles de reprodução.'],
-  ['Arrastar e soltar', 'Pastas e arquivos adicionados direto na janela.'],
-  ['Playlists', 'Fontes locais, online ou mistas.'],
-  ['Favoritos', 'Playlist própria de favoritos.'],
-  ['Login com Google', 'OAuth desktop com PKCE.'],
-  ['Sincronização', 'Playlists do YouTube via YouTube Data API.'],
-  ['Temas', 'Claro e escuro.'],
-  ['Proteção de dados', 'AES-GCM e Windows DPAPI em duas camadas.'],
-];
+const funcionalidades = t.funcionalidades;
 const tecnologias = [
   { nome: 'Tauri', slug: 'tauri' },
   { nome: 'Vue', slug: 'vuedotjs' },
@@ -25,31 +25,40 @@ const tecnologias = [
   { nome: 'Vite', slug: 'vite' },
 ];
 ---
-<Base title="VibeDeck · Pedro Henrique Bohn Costa" description="Player desktop pessoal que une músicas locais e o YouTube Music.">
+<Base title="VibeDeck · Pedro Henrique Bohn Costa" description={t.seoDescricao}>
   <div class="wrap page">
     <div class="top">
-      <a class="back" href="/projetos/">← Projetos</a>
-      <span class="idx">{String(idx + 1).padStart(2, '0')} / {String(todos.length).padStart(2, '0')}</span>
+      <a class="back" href={href(lang, '/projetos/')}>{ti.projeto.voltar}</a>
+      <span class="idx">{pad(idx + 1)} / {pad(todos.length)}</span>
     </div>
     <h1 class="display">VibeDeck.</h1>
     <p class="tagline">Tauri · Vue · Rust</p>
 
     <dl class="meta">
-      <div><dt class="label">Status</dt><dd class="ok">em desenvolvimento</dd></div>
-      <div><dt class="label">Stack</dt><dd>Tauri · Vue · Rust</dd></div>
-      <div><dt class="label">Plataforma</dt><dd>Windows (desktop)</dd></div>
-      <div><dt class="label">Tipo</dt><dd>Projeto pessoal</dd></div>
+      <div><dt class="label">{ti.projeto.status}</dt><dd class="ok">{ti.status['em desenvolvimento']}</dd></div>
+      <div><dt class="label">{ti.projeto.stack}</dt><dd>Tauri · Vue · Rust</dd></div>
+      <div><dt class="label">{ti.projeto.plataforma}</dt><dd>{t.plataforma}</dd></div>
+      <div><dt class="label">{ti.projeto.tipo}</dt><dd>{ti.tipos['Projeto pessoal']}</dd></div>
     </dl>
 
-    <figure class="app" aria-label="Ilustração da interface do VibeDeck">
+    <!-- O som do site só existe aqui: a trilha e o equalizador pertencem ao VibeDeck. -->
+    <div class="sound" role="group" aria-label={t.somAria}>
+      <canvas id="vd-eq" class="eq3d" aria-hidden="true"></canvas>
+      <button class="btn ghost listen" type="button" data-sound-toggle aria-pressed="false">
+        <span aria-hidden="true">♪</span>&nbsp;
+        <span data-sound-label data-on={t.somPausar} data-off={t.somOuvir}>{t.somOuvir}</span>
+      </button>
+    </div>
+
+    <figure class="app" aria-label={t.ilustracaoAria}>
       <div class="bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="t">VibeDeck</span></div>
       <div class="inner">
         <aside>
-          <p class="label">Biblioteca</p>
-          <ul><li class="on">Favoritos</li><li>Local</li><li>YouTube</li><li>Playlists</li></ul>
+          <p class="label">{t.biblioteca}</p>
+          <ul>{t.itens.map((item, i) => <li class={i === 0 ? 'on' : undefined}>{item}</li>)}</ul>
         </aside>
         <div class="queue">
-          <p class="label">Fila</p>
+          <p class="label">{t.fila}</p>
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <div class="line">
               <span class="cv"></span>
@@ -60,58 +69,71 @@ const tecnologias = [
         </div>
       </div>
       <div class="pl"><span class="pbtn"></span><span class="prog"><i></i></span><span class="vol"><i></i></span></div>
-      <figcaption class="label">Ilustração · substituir por screenshot</figcaption>
+      <figcaption class="label">{t.ilustracaoLegenda}</figcaption>
     </figure>
 
     <section class="about">
-      <p class="kicker">01 / Sobre o projeto</p>
-      <p class="display text">Cliente de música desktop pessoal, feito com Tauri, Vue e Rust. Une bibliotecas locais aos metadados sincronizados do YouTube Music em uma interface rápida e pensada para o teclado.</p>
+      <p class="kicker">{t.sobre}</p>
+      <p class="display text">{t.texto}</p>
     </section>
 
     <section>
-      <p class="kicker">02 / Funcionalidades</p>
+      <p class="kicker">{t.funcKicker}</p>
       <ul class="feats">
-        {funcionalidades.map(([t, d], i) => (
+        {funcionalidades.map(([titulo, desc], i) => (
           <li>
-            <span class="n">{String(i + 1).padStart(2, '0')}</span>
-            <strong>{t}</strong>
-            <span class="d">{d}</span>
+            <span class="n">{pad(i + 1)}</span>
+            <strong>{titulo}</strong>
+            <span class="d">{desc}</span>
           </li>
         ))}
       </ul>
     </section>
 
     <section>
-      <p class="kicker">03 / Tecnologias</p>
+      <p class="kicker">{t.tecKicker}</p>
       <ul class="tiles">
-        {tecnologias.map((t) => <Tile nome={t.nome} slug={t.slug} mono={t.mono} />)}
+        {tecnologias.map((tec) => <Tile nome={tec.nome} slug={tec.slug} mono={tec.mono} />)}
       </ul>
     </section>
 
     <section>
-      <p class="kicker">04 / Próximos passos</p>
+      <p class="kicker">{t.proxKicker}</p>
       <div class="next">
         <div>
-          <strong>Camada de reprodução online</strong>
-          <p>Cliente em Rust para o catálogo online, atrás da mesma interface de fonte usada pelo player local.</p>
+          <strong>{t.proxTitulo}</strong>
+          <p>{t.proxTexto}</p>
         </div>
-        <span class="chip">planejado</span>
+        <span class="chip">{t.planejado}</span>
       </div>
-      <p class="note">O VibeDeck é um projeto pessoal e não é afiliado ao Google nem ao YouTube.</p>
+      <p class="note">{t.nota}</p>
     </section>
 
-    <nav class="pager" aria-label="Outros projetos">
+    <nav class="pager" aria-label={ti.projeto.outros}>
       <div>
-        <p class="label">Anterior</p>
-        {anterior ? <a class="display" href={`/projetos/${anterior.id}/`}>← {anterior.data.titulo}</a> : <span class="display none">—</span>}
+        <p class="label">{ti.projeto.anterior}</p>
+        {anterior ? <a class="display" href={href(lang, `/projetos/${anterior.id}/`)}>← {anterior.data.titulo}</a> : <span class="display none">—</span>}
       </div>
       <div class="r">
-        <p class="label">Próximo</p>
+        <p class="label">{ti.projeto.proximo}</p>
         <span class="display none">—</span>
       </div>
     </nav>
   </div>
 </Base>
+
+<script>
+  import { startEq3D } from '../../../scripts/eq';
+
+  function boot(): void {
+    const canvas = document.getElementById('vd-eq') as HTMLCanvasElement | null;
+    if (!canvas || canvas.dataset.started) return;
+    canvas.dataset.started = '1';
+    startEq3D(canvas);
+  }
+  document.addEventListener('astro:page-load', boot);
+  boot();
+</script>
 
 <style>
   .page {
@@ -160,6 +182,35 @@ const tecnologias = [
   }
   .ok {
     color: var(--accent);
+  }
+  .sound {
+    position: relative;
+    height: clamp(200px, 26vh, 260px);
+    margin: 0 0 48px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .eq3d {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .listen {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    height: 40px;
+    padding-inline: 20px;
+    font: 500 14px var(--mono);
+    background: var(--bg);
+  }
+  .listen.is-on {
+    color: var(--accent);
+    border-color: var(--accent);
   }
   .app {
     margin: 0;
