@@ -2,27 +2,13 @@
 
 Site estático em Astro 5, publicado no GitHub Pages pelo workflow `.github/workflows/deploy.yml` a cada push na `main`.
 
-## Regra de sincronia com o Penpot
-- O Penpot é a fonte da verdade do design. **Sempre atualizar o Penpot antes de alterar o design do app.**
-- Vale para layout, cores, tipografia, espaçamento, componentes e conteúdo visual. Fluxo: ajustar no Penpot, conferir o export, só então replicar no código.
-- Mudanças puramente técnicas (build, dependências, bug sem efeito visual) não precisam passar pelo Penpot.
-- Se um pedido vier direto para o código, atualizar o Penpot antes ou avisar que ficou fora de sincronia.
+## Design
+- O design nasceu como protótipo no Penpot (`design/portfolio.penpot`). Isso valeu para a fase inicial: **o Penpot não é mais a fonte da verdade e não precisa ser atualizado.** O código é a referência; o arquivo fica só como registro do protótipo inicial (não exportar de novo).
+- Telas e componentes mais novos (herói por projeto, seletor de idioma, linguagens por contexto de uso, marca do Hollow Sign) existem só no código.
 
-## Documento do Penpot no repositório
-- O arquivo do Penpot é versionado em `design/portfolio.penpot` (exportação `.penpot`, com bibliotecas incluídas).
-- **A cada commit neste repositório, se o Penpot foi alterado desde o último commit, subir o documento atualizado no mesmo commit.** Se não houve alteração no Penpot, não mexer no arquivo.
-- Na dúvida (por exemplo, o usuário editou o Penpot à mão), perguntar antes de commitar.
-- O `.penpot` é um arquivo zip: o diff do Git não é legível, então a mensagem do commit deve dizer o que mudou no design.
-- Tamanho: o arquivo tem cerca de 4 MB (em 2026-10-29), o que é aceitável. Reavaliar (Git LFS, ou versionar o conteúdo descompactado) se passar de ~20 MB ou se o repositório passar de ~300 MB.
-- Exportação: pelo Penpot (File > Export, formato `.penpot`) para `design/portfolio.penpot`. A exportação automática pelo plugin não foi validada.
-
-## Telas no Penpot
-Desktop 1440 e mobile 390: Entrada, Home, Menu aberto, Projetos, Projeto (uberGraph) e Projeto / VibeDeck. Os exemplos de animação (hover da linha, equalizador, toggle de som) ficam em boards separados.
-
-## Tokens (mesmos nomes no Penpot: biblioteca de cores e set `core`)
-- Cores: `bg #0A0B0D`, `surface #14161A`, `border #262A31`, `text #F2F4F7`, `muted #8A919C`, `accent #35F2A0`, `warn #FFB020`, `danger #FF4D4D`, `level-senior #4DA3FF`.
+## Tokens
+- Cores: `bg #0A0B0D`, `surface #14161A`, `border #262A31`, `text #F2F4F7`, `muted #8A919C`, `accent #35F2A0`, `warn #FFB020`, `danger #FF4D4D`, `level-senior #4DA3FF` (hoje marca "em projetos" nas linguagens).
 - Fontes: Barlow Condensed (títulos), JetBrains Mono (rótulos e detalhes), Inter (corpo).
-- Níveis de linguagem: Básico vermelho, Júnior amarelo, Pleno verde, Sênior azul.
 
 ## Idiomas (PT, EN, ES)
 - Rotas: `src/pages/[...lang]/`. Português fica na raiz (`/`), os outros em `/en/` e `/es/`. O segmento `projetos` é o mesmo nos três idiomas.
@@ -46,3 +32,4 @@ Desktop 1440 e mobile 390: Entrada, Home, Menu aberto, Projetos, Projeto (uberGr
 ## Conteúdo
 - Projetos: um `.md` por projeto em `src/content/projetos/`; páginas com design próprio ficam em `src/pages/[...lang]/projetos/<slug>.astro`.
 - Ícones: pacote `simple-icons` (CC0). Sem telefone nem e-mail em texto no HTML (o e-mail é revelado por JavaScript).
+- Currículo: `public/curriculo-pt.pdf` e `public/curriculo-en.pdf` (o espanhol usa o inglês; o mapeamento fica em `src/data/contato.ts`). Como o repositório é público, são versões **sem e-mail nem telefone**: nunca publicar a versão completa aqui. Os bullets da Innovo ainda não foram confirmados e ficaram de fora; ao incluir, usar só o que o Pedro confirmar.
